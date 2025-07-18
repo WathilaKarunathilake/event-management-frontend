@@ -1,0 +1,15 @@
+import type { LoginPayload, RegisterPayload } from '@/models/AuthModel'
+import axios from 'axios'
+
+// Base API URL
+const AUTH_URL = `${import.meta.env.VITE_BACKEND_URL}/auth`
+
+export const registerUser = async (data: RegisterPayload): Promise<any> => {
+  const response = await axios.post(`${AUTH_URL}/register`, data)
+  return response
+}
+
+export const loginUser = async (data: LoginPayload): Promise<any> => {
+  const response = await axios.post(`${AUTH_URL}/login`, data)
+  return response
+}
