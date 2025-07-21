@@ -26,3 +26,18 @@ export interface JwtPayload {
   role: string
   [key: string]: any
 }
+
+export interface UserDetails {
+  name: string
+  email: string
+  phone: string
+}
+
+export interface User {
+  name: string
+  role: Role[]
+}
+
+export type Role = 'ADMIN' | 'PUBLICUSER'
+
+

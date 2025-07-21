@@ -1,18 +1,10 @@
-import { createContext, useContext, useEffect, useState } from 'react'
-import { jwtDecode } from 'jwt-decode'
-
-type Role = 'STAFF' | 'LIBRARY'
-
-interface User {
-  name: string
-  email: string
-  roles: Role[]
-}
+import { createContext, useContext, useEffect, useState } from "react"
+import type { Role, User } from "@/models/AuthModel"
+import { handleGettingJwtInfo } from "@/services/AuthService"
 
 interface AuthContextType {
   user: User | null
-  token: string | null
-  login: (token: string) => void
+  login: () => Promise<void>
   logout: () => void
   hasRole: (role: Role) => boolean
   loading: boolean
@@ -23,46 +15,47 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 let globalLogout: (() => void) | null = null
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [token, setToken] = useState<string | null>(null)
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    const stored = window.localStorage.getItem("token")
-    if (stored) login(stored)
-  }, [])
-
-  const login = (jwt: string) => {
+  const getUserDetails = async () => {
     try {
-      const decoded: any = jwtDecode(jwt)
-      setToken(jwt)
-      console.log(decoded.role)
-      setUser({
-        email: decoded.email,
-        roles: decoded.role,
-        name: decoded.name,
-      })
-    } catch (e) {
-      console.error('Invalid token', e)
+      setLoading(true)
+      const response = await handleGettingJwtInfo()
+      console.log(response)
+      setUser(response)
+    } catch (error) {
+      console.error("Failed to get user details", error)
+      setUser(null)
     } finally {
       setLoading(false)
     }
   }
 
-  const logout = () => {
-    setToken(null)
-    setUser(null)
-    window.localStorage.removeItem("token")
+  useEffect(() => {
+    getUserDetails()
+  }, [])
+
+  const login = async () => {
+    try {
+      await getUserDetails()
+    } catch (e) {
+      console.error("Login error", e)
+    }
   }
 
-  const hasRole = (role: Role) => user?.roles.includes(role) ?? false
+  const logout = () => {
+    setUser(null)
+  }
+
+  const hasRole = (role: Role) => user?.role.includes(role) ?? false
 
   useEffect(() => {
     globalLogout = logout
   }, [logout])
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, hasRole, loading }}>
+    <AuthContext.Provider value={{ user, login, logout, hasRole, loading }}>
       {children}
     </AuthContext.Provider>
   )
@@ -70,7 +63,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 export const useAuth = () => {
   const ctx = useContext(AuthContext)
-  if (!ctx) throw new Error('useAuth must be used in AuthProvider')
+  if (!ctx) throw new Error("useAuth must be used in AuthProvider")
   return ctx
 }
 

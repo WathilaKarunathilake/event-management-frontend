@@ -1,8 +1,11 @@
-import { loginUser, registerUser } from '@/features/AuthAPI'
+import { getJwtInfo, getUserInfo, loginUser, registerUser } from '@/features/AuthAPI'
 import type {
   AuthData,
   LoginPayload,
   RegisterPayload,
+  Role,
+  User,
+  UserDetails,
 } from '@/models/AuthModel'
 
 export const handleRegister = async (
@@ -30,4 +33,34 @@ export const handleLogin = async (payload: LoginPayload): Promise<AuthData> => {
   } catch (error: any) {
     throw new Error(error.response.data.data)
   }
+}
+
+export const handeGettingUserInfo = async (): Promise<UserDetails> => {
+  try {
+    const response = await getUserInfo()
+    if (!response.data.success) {
+      throw new Error(response.data.data)
+    }
+    return response.data.data
+  } catch (error: any) {
+    throw new Error(error.response.data.data)
+  }
+}
+
+export const handleGettingJwtInfo = async (): Promise<User> => {
+  try {
+    const response = await getJwtInfo()
+    if (!response.data.success) {
+      throw new Error(response.data.data)
+    }
+    return response.data.data
+  } catch (error: any) {
+    throw new Error(error.response.data.data)
+  }
+}
+
+export const getUserRole = async (): Promise<Role[]> => {
+  const response = await handleGettingJwtInfo();
+  console.log(response)
+  return response.role
 }

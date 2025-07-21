@@ -5,7 +5,9 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Link } from "react-router-dom"
-import { handleLogin } from "@/services/AuthService"
+import { getUserRole, handleLogin } from "@/services/AuthService"
+import { useAuth } from "@/context/auth/AuthProvider"
+import { navigateByRole } from "@/lib/role-navigator"
 
 export const Login = () => {
   const navigate = useNavigate()
@@ -18,6 +20,7 @@ export const Login = () => {
 
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
+  const { login } = useAuth()
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value, type, checked } = e.target
@@ -30,10 +33,10 @@ export const Login = () => {
     setLoading(true)
 
     try {
-      const response = await handleLogin(form)
-      console.log(response)
-
-      window.localStorage.setItem("token", response.token);
+      await handleLogin(form)
+      login()
+      const roles = await getUserRole()
+      navigateByRole(navigate, roles.toString())
     } catch (err: any) {
       setError(err.response?.data?.message || "Login failed")
     } finally {
@@ -42,7 +45,7 @@ export const Login = () => {
   }
 
   return (
-    <div className="flex justify-center items-center min-h-screen px-4">
+    <div className="flex justify-center px-4 py-12">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle className="text-center text-2xl font-semibold">Login</CardTitle>
@@ -90,7 +93,7 @@ export const Login = () => {
 
               <Button
                 type="submit"
-                className="w-full bg-purple-700 hover:bg-purple-800 text-white"
+                className="w-full bg-purple-700 hover:bg-purple-800 text-white cursor-pointer"
                 disabled={loading}
               >
                 {loading ? "Logging in..." : "Log in"}

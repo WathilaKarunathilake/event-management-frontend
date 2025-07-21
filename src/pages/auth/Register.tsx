@@ -17,10 +17,13 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Link } from "react-router-dom"
-import { handleRegister } from "@/services/AuthService"
+import { getUserRole, handleRegister } from "@/services/AuthService"
+import { useAuth } from "@/context/auth/AuthProvider"
+import { navigateByRole } from "@/lib/role-navigator"
 
 export const Register = () => {
   const navigate = useNavigate()
+  const { login } = useAuth()
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
@@ -45,15 +48,16 @@ export const Register = () => {
     setLoading(true)
 
     try {
-      const response = await handleRegister({
+      await handleRegister({
         name: form.firstName + " " + form.lastName,
         phoneNumber: form.contactNumber,
         password: form.password,
         email: form.email,
         role: form.role
       })
-      
-      window.localStorage.setItem("token", response.token);
+      login()
+      const roles = await getUserRole()
+      navigateByRole(navigate, roles.toString())
     } catch {
 
     } finally {
@@ -63,7 +67,7 @@ export const Register = () => {
   }
 
   return (
-    <div className="flex justify-center items-center min-h-screen px-4">
+    <div className="flex justify-center items-center min-h-screen px-4 py-6">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle className="text-center text-xl">
@@ -93,12 +97,12 @@ export const Register = () => {
               <div className="space-y-1.5">
                 <Label htmlFor="role">Role</Label>
                 <Select onValueChange={handleRoleChange}>
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full cursor-pointer">
                     <SelectValue placeholder="Choose..." />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="0">Public User</SelectItem>
-                    <SelectItem value="1">Admin</SelectItem>
+                    <SelectItem value="1" className="cursor-pointer">Public User</SelectItem>
+                    <SelectItem value="0" className="cursor-pointer">Admin</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -121,7 +125,7 @@ export const Register = () => {
 
             <Button
               type="submit"
-              className="w-full mt-2 bg-purple-700 hover:bg-purple-800 text-white"
+              className="w-full mt-2 bg-purple-700 hover:bg-purple-800 text-white cursor-pointer"
               disabled={loading}
             >
               {loading ? "Registering..." : "Register"}
