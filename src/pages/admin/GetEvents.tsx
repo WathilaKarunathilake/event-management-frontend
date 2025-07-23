@@ -1,4 +1,6 @@
+import { showErrorToast, showSuccessToast } from "@/components/files/toast";
 import { Button } from "@/components/ui/button";
+import { getEventTypeLabel } from "@/lib/helpers";
 import type { EventDetails } from "@/models/EventModel"
 import { handleDeletingEvents, handleGettingPostedEvents } from "@/services/EventService";
 import {
@@ -19,17 +21,27 @@ export const GetEvents = () => {
   const navigate = useNavigate()
 
   const navigateToUpdate = (id: string) => {
-    navigate("/events/" + id)
+    navigate("/admin/update-event/" + id)
+  }
+
+  const navigateToViewRegistrations = (id: string) => {
+    navigate("/admin/events/registrations/" + id)
   }
 
   const deleteEvent = async (id: string) => {
+    try {
     const response = await handleDeletingEvents(id)
-    console.log(response)
+    showSuccessToast(response)
+    fetchAllPostedEvents();
+    } catch (error: any) {
+      showErrorToast(error.message)
+    }
   }
 
   const fetchAllPostedEvents = async() => {
     const response = await handleGettingPostedEvents();
     setEvents(response)
+    console.log(response)
   }
 
   useEffect(() => {
@@ -59,13 +71,13 @@ export const GetEvents = () => {
             >
               <div className="flex items-start space-x-4">
                 <img
-                  src={typeof event.eventImage === "string" ? event.eventImage : ""}
+                  src={typeof event.imageUrl === "string" ? event.imageUrl : ""}
                   alt={event.title}
                   className="rounded-md w-16 h-16 object-cover"
                 />
                 <div className="space-y-1 text-sm">
                   <p className="font-semibold">{event.title}</p>
-                  {event.description && <p className="text-gray-500">{event.description}</p>}
+                  {event.description && <p className="text-gray-500 break-all whitespace-pre-wrap pr-3">{event.description}</p>}
                   <p className="text-gray-500 flex items-center gap-1">
                     <MapPin className="w-4 h-4" />
                     {event.location}
@@ -81,13 +93,13 @@ export const GetEvents = () => {
                   </p>
                   <p className="text-gray-500 flex items-center gap-1">
                     <Ticket className="w-4 h-4" />
-                    Type: {event.eventType}
+                    Type: {getEventTypeLabel(event.eventType)}
                   </p>
                 </div>
               </div>
 
               <div className="flex flex-col space-y-2 items-end">
-                <Button variant="outline" size="icon" aria-label="View Registered Users" className="cursor-pointer">
+                <Button variant="outline" size="icon" aria-label="View Registered Users" className="cursor-pointer" onClick={() => navigateToViewRegistrations(event.id)}>
                   <Users className="w-4 h-4" />
                 </Button>
                 <Button variant="outline" size="icon" aria-label="Update Event" className="cursor-pointer" onClick={() => navigateToUpdate(event.id)}>

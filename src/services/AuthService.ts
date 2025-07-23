@@ -1,4 +1,4 @@
-import { getJwtInfo, getUserInfo, loginUser, registerUser } from '@/features/AuthAPI'
+import { getJwtInfo, getUserInfo, loginUser, logout, registerUser } from '@/features/AuthAPI'
 import type {
   AuthData,
   LoginPayload,
@@ -59,8 +59,12 @@ export const handleGettingJwtInfo = async (): Promise<User> => {
   }
 }
 
+export const handleLogout = async (): Promise<string> => {
+  const response = await logout();
+  return response.data.data
+}
+
 export const getUserRole = async (): Promise<Role[]> => {
   const response = await handleGettingJwtInfo();
-  console.log(response)
   return response.role
 }

@@ -7,14 +7,17 @@ export interface BaseUserDetais {
 }
 
 export interface RegisteredEvent extends BaseEvent {
-    registerType: string
+    id: string
+    registerType: number
 }
 
 export interface RegisterEvent extends BaseUserDetais {
+  eventId: string
 }
 
 export interface GetRegisteredUsers extends BaseUserDetais {
     accountName: string,
     accountEmail: string,
     accountPhoneNumber: string
+    registerType: number
 }

@@ -14,7 +14,7 @@ export const Footer = () => {
         {/* Left */}
         <p className="text-center md:text-left">
           © {year} Eventify. Built with 💜 by{" "}
-          <a href="#" className="hover:text-white underline">Wathila Karunathilake</a>
+          <a href="https://www.linkedin.com/in/wathila-karunathilake-5027b8296/" className="hover:text-white underline">Wathila Karunathilake</a>
         </p>
 
         {/* Center - Social Icons */}

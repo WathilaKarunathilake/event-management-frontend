@@ -1,24 +1,28 @@
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { getUserInfo } from "@/features/AuthAPI";
 import type { UserDetails } from "@/models/AuthModel";
+import { handeGettingUserInfo } from "@/services/AuthService";
+import { handleRegisterForEvents } from "@/services/RegistrationService";
+import { showErrorToast, showSuccessToast } from "../files/toast";
 
 interface RegisterModelProps {
   onClose: () => void;
+  eventId: string
 }
 
-export function RegisterModel({ onClose }: RegisterModelProps) {
+export function RegisterModel({ onClose, eventId }: RegisterModelProps) {
   const [userDetails, setUserDetails] = useState<UserDetails>({
     name: "",
     email: "",
-    phone: "",
+    phoneNumber: "",
   });
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await getUserInfo();
+        const response = await handeGettingUserInfo();
         setUserDetails(response);
       } catch {
         console.log("Failed to fetch user details");
@@ -32,9 +36,21 @@ export function RegisterModel({ onClose }: RegisterModelProps) {
     setUserDetails((prev) => ({ ...prev, [id]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    setLoading(true)
     e.preventDefault();
-    console.log("Submitting", userDetails);
+    try {
+
+    const response = await handleRegisterForEvents({
+      ...userDetails,
+    eventId: eventId});
+    showSuccessToast(response)
+    } catch (error: any) {
+      showErrorToast(error.message)
+    } finally {
+      setLoading(false)
+      onClose()
+    }
   };
 
   return (
@@ -80,14 +96,14 @@ export function RegisterModel({ onClose }: RegisterModelProps) {
           </div>
 
           <div>
-            <label htmlFor="phone" className="block text-sm font-medium mb-1">
+            <label htmlFor="phoneNumber" className="block text-sm font-medium mb-1">
               Phone Number
             </label>
             <input
-              id="phone"
+              id="phoneNumber"
               type="tel"
               placeholder="+1234567890"
-              value={userDetails.phone}
+              value={userDetails.phoneNumber}
               onChange={handleChange}
               className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-600"
             />
@@ -95,9 +111,10 @@ export function RegisterModel({ onClose }: RegisterModelProps) {
 
           <Button
             type="submit"
+            disabled={loading}
             className="bg-purple-700 hover:bg-purple-800 text-white w-full cursor-pointer"
           >
-            Buy Now
+            Register Now
           </Button>
         </form>
       </div>

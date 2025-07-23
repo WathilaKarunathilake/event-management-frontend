@@ -8,12 +8,17 @@ import {
   LogOut,
   CalendarPlus
 } from "lucide-react"; 
+import { handleLogout } from "@/services/AuthService";
+import { showSuccessToast } from "../files/toast";
 
 export const Navbar = () => {
   const { user, logout, hasRole } = useAuth();
   const navigate = useNavigate()
 
-  const logoutUser = () => {
+  const logoutUser = async () => {
+    const response = await handleLogout()
+    showSuccessToast(response)
+    
     logout()
     navigate('/login')
   }
@@ -37,7 +42,7 @@ export const Navbar = () => {
                     <ShoppingBag className="w-4 h-4" /> Events
                   </Link>
                   <Link
-                    to="/customer/ticket-history"
+                    to="/user/registrations"
                     className="text-black hover:text-purple-700 text-sm font-medium flex items-center gap-1"
                   >
                     <Ticket className="w-4 h-4" /> Registrations
@@ -63,11 +68,11 @@ export const Navbar = () => {
 
             <div className="flex items-center gap-4">
               <div className="text-sm text-right font-medium leading-tight">
-                <div>{user.name}</div>
-                <div className="text-xs text-purple-700 font-medium">
-                  {user.role}
-                </div>
-              </div>
+  <div>{user.name}</div>
+  <div className="text-xs text-purple-700 font-medium">
+    {user.role.toLocaleString() === "PUBLICUSER" ? "USER" : "ADMIN"}
+  </div>
+</div>
               <Button
                 className="cursor-pointer bg-purple-700 hover:bg-purple-800 text-white flex items-center gap-1"
                 onClick={logoutUser}

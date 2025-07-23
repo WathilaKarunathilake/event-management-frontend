@@ -20,6 +20,8 @@ import { Link } from "react-router-dom"
 import { getUserRole, handleRegister } from "@/services/AuthService"
 import { useAuth } from "@/context/auth/AuthProvider"
 import { navigateByRole } from "@/lib/role-navigator"
+import { Eye, EyeOff } from "lucide-react"
+import { showErrorToast } from "@/components/files/toast"
 
 export const Register = () => {
   const navigate = useNavigate()
@@ -33,6 +35,8 @@ export const Register = () => {
     password: "",
     confirmPassword: ""
   })
+  const [showPassword, setShowPassword] = useState(false)
+const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [loading, setLoading] = useState(false)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,6 +49,11 @@ export const Register = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (form.password !== form.confirmPassword) {
+      showErrorToast("Passwords do not match")
+      return
+    }
+
     setLoading(true)
 
     try {
@@ -114,14 +123,47 @@ export const Register = () => {
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" placeholder="Enter your password" value={form.password} onChange={handleChange} />
-            </div>
+  <Label htmlFor="password">Password</Label>
+  <div className="relative">
+    <Input
+      id="password"
+      type={showPassword ? "text" : "password"}
+      placeholder="Enter your password"
+      value={form.password}
+      onChange={handleChange}
+      className="pr-10"
+    />
+    <button
+      type="button"
+      onClick={() => setShowPassword((prev) => !prev)}
+      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+    >
+      {showPassword ? <EyeOff className="w-5 h-5 cursor-pointer" /> : <Eye className="w-5 h-5 cursor-pointer" />}
+    </button>
+  </div>
+</div>
 
-            <div className="space-y-1.5">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
-              <Input id="confirmPassword" type="password" placeholder="Enter your password again" value={form.confirmPassword} onChange={handleChange} />
-            </div>
+<div className="space-y-1.5">
+  <Label htmlFor="confirmPassword">Confirm Password</Label>
+  <div className="relative">
+    <Input
+      id="confirmPassword"
+      type={showConfirmPassword ? "text" : "password"}
+      placeholder="Enter your password again"
+      value={form.confirmPassword}
+      onChange={handleChange}
+      className="pr-10"
+    />
+    <button
+      type="button"
+      onClick={() => setShowConfirmPassword((prev) => !prev)}
+      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+    >
+      {showConfirmPassword ? <EyeOff className="w-5 h-5 cursor-pointer" /> : <Eye className="w-5 h-5 cursor-pointer" />}
+    </button>
+  </div>
+</div>
+
 
             <Button
               type="submit"

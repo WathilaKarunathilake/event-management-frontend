@@ -1,0 +1,35 @@
+export function getRegistrationStatusLabel(status: number): string {
+  switch (status) {
+    case 0:
+      return "Registered";
+    case 1:
+      return "Cancelled";
+    default:
+      return "Unknown";
+  }
+}
+
+export function getEventTypeLabel(type: number): string {
+  switch (type) {
+    case 0:
+      return "Conference";
+    case 1:
+      return "Workshop";
+    case 2:
+      return "Seminar";
+    case 3:
+      return "Meetup";
+    case 4:
+      return "Webinar";
+    case 5:
+      return "Concert";
+    case 6:
+      return "Festival";
+    case 7:
+      return "Competition";
+    case 8:
+      return "Exhibition";
+    default:
+      return "Unknown";
+  }
+}

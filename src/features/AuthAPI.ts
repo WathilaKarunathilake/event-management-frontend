@@ -23,3 +23,8 @@ export const getJwtInfo = async (): Promise<any> => {
   const response = await apiClient.get(`${AUTH_URL}/me`)
   return response
 }
+
+export const logout = async (): Promise<any> => {
+  const response = await apiClient.post(`${AUTH_URL}/logout`)
+  return response
+}

@@ -6,12 +6,15 @@ import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
-import { getEventById, updateEvent } from "@/features/EventsAPI"
+import { handleEventGettingById, handleEventUpdating } from "@/services/EventService"
+import { showErrorToast, showSuccessToast } from "@/components/files/toast"
+import { Loader2 } from "lucide-react"
 
 export const UpdateEvent = () => {
   const { id } = useParams() 
   const [loading, setLoading] = useState(true)
 
+  const [selectedFileName, setSelectedFileName] = useState<string | null>(null)
   const [form, setForm] = useState({
     title: "",
     description: "",
@@ -20,27 +23,34 @@ export const UpdateEvent = () => {
     endDateTime: "",
     eventType: 0,
     capacity: 0,
-    createdBy: "",
-    eventImage: null as File | null,
+    imageUrl: "",
   })
 
   useEffect(() => {
-    const fetchEvent = async () => {
-      try {
-        const data = await getEventById(id!) 
-        setForm({
-          ...data,
-          eventImage: null, 
-        })
-      } catch (error) {
-        console.error("Failed to load event", error)
-      } finally {
-        setLoading(false)
-      }
+  const fetchEvent = async () => {
+    try {
+      setLoading(true)
+      const data = await handleEventGettingById(id!)
+      setForm({
+        title: data.title ?? "",
+        description: data.description ?? "",
+        location: data.location ?? "",
+        startDateTime: data.startDateTime,
+        endDateTime: data.endDateTime,
+        eventType: data.eventType ?? 0,
+        capacity: data.capacity ?? 0,
+        imageUrl: data.imageUrl ?? "",
+      })
+    } catch (error) {
+      console.error("Failed to load event", error)
+    } finally {
+      setLoading(false)
     }
+  }
 
-    fetchEvent()
-  }, [id])
+  fetchEvent()
+}, [id])
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.id]: e.target.value })
@@ -51,18 +61,40 @@ export const UpdateEvent = () => {
   }
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.[0]) {
-      setForm({ ...form, eventImage: e.target.files[0] })
-    }
+  const file = e.target.files?.[0]
+  if (!file) return
+
+  setSelectedFileName(file.name) 
+
+  const reader = new FileReader()
+  reader.onloadend = () => {
+    const base64String = (reader.result as string).split(',')[1]
+    setForm({ ...form, imageUrl: base64String })
   }
+  reader.readAsDataURL(file)
+}
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setLoading(true)
     try {
-      const response = await updateEvent(id!, form)
-      console.log("Event updated", response)
-    } catch (error) {
+      const startDate = new Date(form.startDateTime)
+    const endDate = new Date(form.endDateTime)
+
+    const formattedForm = {
+      ...form,
+      startDateTime: startDate.toISOString(),
+      endDateTime: endDate.toISOString(),
+    }
+
+      const response = await handleEventUpdating(id!, formattedForm)
+          showSuccessToast(response)
+    } catch (error: any) {
       console.error("Update failed", error)
+        showErrorToast(error.message)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -109,13 +141,19 @@ export const UpdateEvent = () => {
               <div className="space-y-1.5">
                 <Label htmlFor="eventType">Event Type</Label>
                 <Select onValueChange={handleSelect} defaultValue={form.eventType.toString()}>
-                  <SelectTrigger>
+                  <SelectTrigger  className='cursor-pointer w-full'>
                     <SelectValue placeholder="Select type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="0">Conference</SelectItem>
-                    <SelectItem value="1">Workshop</SelectItem>
-                    <SelectItem value="2">Seminar</SelectItem>
+                    <SelectItem className="cursor-pointer" value="0">Conference</SelectItem>
+                                        <SelectItem className="cursor-pointer" value="1">Workshop</SelectItem>
+                                        <SelectItem className="cursor-pointer" value="2">Seminar</SelectItem>
+                                        <SelectItem className="cursor-pointer" value="3">Meetup</SelectItem>
+                                        <SelectItem className="cursor-pointer" value="4">Webinar</SelectItem>
+                                        <SelectItem className="cursor-pointer" value="5">Concert</SelectItem>
+                                        <SelectItem className="cursor-pointer" value="6">Festival</SelectItem>
+                                        <SelectItem className="cursor-pointer" value="7">Competition</SelectItem>
+                                        <SelectItem className="cursor-pointer" value="8">Exhibition</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -126,13 +164,47 @@ export const UpdateEvent = () => {
               </div>
             </div>
 
-            <div className="space-y-1.5">
-              <Label htmlFor="eventImage">Event Image</Label>
-              <Input id="eventImage" type="file" accept="image/*" onChange={handleImageChange} />
-            </div>
+           <div className="space-y-1.5">
+  <Label htmlFor="imageUrl">Event Image</Label>
 
-            <Button type="submit" className="w-full bg-purple-700 text-white hover:bg-purple-800">
-              Update Event
+  <div className="flex items-center gap-4">
+    <label
+      htmlFor="imageUrl"
+      className="bg-gray-100 hover:bg-gray-200 text-black px-4 py-2 rounded cursor-pointer"
+    >
+      Choose File
+    </label>
+
+    {selectedFileName ? (
+      <span className="text-sm text-gray-700">{selectedFileName}</span>
+    ) : form.imageUrl && form.imageUrl.startsWith("http") ? (
+      <a
+        href={form.imageUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-blue-600 underline break-all text-sm"
+      >
+        View Image
+      </a>
+    ) : (
+      <span className="text-gray-500 text-sm">No file chosen</span>
+    )}
+  </div>
+
+  <input
+    id="imageUrl"
+    type="file"
+    accept="image/*"
+    onChange={handleImageChange}
+    className="hidden"
+  />
+</div>
+
+
+
+            <Button type="submit" className="w-full bg-purple-700 text-white hover:bg-purple-800 cursor-pointer" disabled={loading}>
+              {loading && <Loader2 className="h-6 w-6 animate-spin stroke-[2.5]" />}
+              {loading ? "Updating..." : "Update Event"}
             </Button>
           </form>
         </CardContent>

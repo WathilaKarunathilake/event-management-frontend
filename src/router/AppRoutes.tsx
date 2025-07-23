@@ -9,23 +9,56 @@ import UnauthorizedPage from "@/pages/common/UnauthorizedPage"
 import ViewEvents from "@/pages/user/ViewEvents"
 import { UpdateEvent } from "@/pages/admin/UpdateEvent"
 import { GetRegistrations } from "@/pages/admin/GetRegistrations"
+import { ProtectedRoute } from "@/context/auth/ProtectedRoute"
 
 export const AppRoutes = () => {
   return (
     <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+      {/* Public Routes */}
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
 
-        <Route path="/admin/add-event" element={<AddEvent />} />
-        <Route path="/admin/update-event/:id" element={<UpdateEvent />} />
-        <Route path="/admin/events/registrations/:id" element={<GetRegistrations />} />
-        <Route path="/admin/events" element={<GetEvents />} />
-        
-        <Route path="/user/events" element={<ViewEvents />} />
-        <Route path="/user/registrations" element={<ViewRegistrations />} />
+      {/* Admin Protected Routes */}
+      <Route path="/admin/add-event" element={
+        <ProtectedRoute roles={["ADMIN"]}>
+          <AddEvent />
+        </ProtectedRoute>
+      } />
 
-        <Route path="/unauthorized" element={<UnauthorizedPage />} />
-        <Route path="*" element={<NotFoundPage />} />
+      <Route path="/admin/update-event/:id" element={
+        <ProtectedRoute roles={["ADMIN"]}>
+          <UpdateEvent />
+        </ProtectedRoute>
+      } />
+
+      <Route path="/admin/events/registrations/:eventId" element={
+        <ProtectedRoute roles={["ADMIN"]}>
+          <GetRegistrations />
+        </ProtectedRoute>
+      } />
+
+      <Route path="/admin/events" element={
+        <ProtectedRoute roles={["ADMIN"]}>
+          <GetEvents />
+        </ProtectedRoute>
+      } />
+
+      {/* User Protected Routes */}
+      <Route path="/user/events" element={
+        <ProtectedRoute roles={["PUBLICUSER"]}>
+          <ViewEvents />
+        </ProtectedRoute>
+      } />
+
+      <Route path="/user/registrations" element={
+        <ProtectedRoute roles={["PUBLICUSER"]}>
+          <ViewRegistrations />
+        </ProtectedRoute>
+      } />
+
+      {/* Error Pages */}
+      <Route path="/unauthorized" element={<UnauthorizedPage />} />
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   )
 }

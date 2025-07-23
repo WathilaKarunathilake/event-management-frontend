@@ -8,6 +8,7 @@ import { Link } from "react-router-dom"
 import { getUserRole, handleLogin } from "@/services/AuthService"
 import { useAuth } from "@/context/auth/AuthProvider"
 import { navigateByRole } from "@/lib/role-navigator"
+import { Eye, EyeOff } from "lucide-react"
 
 export const Login = () => {
   const navigate = useNavigate()
@@ -20,6 +21,8 @@ export const Login = () => {
 
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+
   const { login } = useAuth()
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,16 +68,27 @@ export const Login = () => {
                 />
               </div>
 
-              <div className="space-y-1.5">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  type="password"
-                  id="password"
-                  placeholder="Enter your password"
-                  value={form.password}
-                  onChange={handleChange}
-                />
-              </div>
+             <div className="space-y-1.5">
+  <Label htmlFor="password">Password</Label>
+  <div className="relative">
+    <Input
+      type={showPassword ? "text" : "password"}
+      id="password"
+      placeholder="Enter your password"
+      value={form.password}
+      onChange={handleChange}
+      className="pr-10"
+    />
+    <button
+      type="button"
+      onClick={() => setShowPassword((prev) => !prev)}
+      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+    >
+      {showPassword ? <EyeOff className="w-5 h-5 cursor-pointer" /> : <Eye className="w-5 h-5 cursor-pointer" />}
+    </button>
+  </div>
+</div>
+
 
               <div className="flex items-center space-x-2 pt-2">
                 <input

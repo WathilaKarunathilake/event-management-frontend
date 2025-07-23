@@ -11,26 +11,10 @@ export interface LoginPayload {
   password: string
 }
 
-export interface AuthData {
-  token: string
-  message: string
-}
-
-export interface AuthResponse {
-  success: boolean
-  data: AuthData
-}
-
-export interface JwtPayload {
-  sub: string
-  role: string
-  [key: string]: any
-}
-
 export interface UserDetails {
   name: string
   email: string
-  phone: string
+  phoneNumber: string
 }
 
 export interface User {

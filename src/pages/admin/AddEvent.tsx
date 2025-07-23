@@ -8,6 +8,9 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
 import { handleEventAdding } from '@/services/EventService'
+import { showErrorToast, showSuccessToast } from '@/components/files/toast'
+import { useNavigate } from 'react-router-dom'
+import { Loader2 } from 'lucide-react'
 
 export const AddEvent = () => {
   const [form, setForm] = useState({
@@ -18,9 +21,10 @@ export const AddEvent = () => {
     endDateTime: "",
     eventType: 0,
     capacity: 0,
-    createdBy: "",
-    eventImage: null as File | null,
+    imageUrl: "",
   })
+  const [loading, setLoading] = useState(false)
+  const navigate = useNavigate()
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.id]: e.target.value })
@@ -31,20 +35,41 @@ export const AddEvent = () => {
   }
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.[0]) {
-      setForm({ ...form, eventImage: e.target.files[0] })
-    }
+  const file = e.target.files?.[0]
+  if (!file) return
+
+  const reader = new FileReader()
+  reader.onloadend = () => {
+    const base64String = (reader.result as string).split(',')[1]  
+setForm({ ...form, imageUrl: base64String })
   }
+  reader.readAsDataURL(file) 
+}
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    try {
-        const response = await handleEventAdding(form)
-        console.log(response);
-    } catch{
+  e.preventDefault()
+  setLoading(true)
 
+  try {
+    const startDate = new Date(form.startDateTime)
+    const endDate = new Date(form.endDateTime)
+
+    const formattedForm = {
+      ...form,
+      startDateTime: startDate.toISOString(),
+      endDateTime: endDate.toISOString(),
     }
+
+    const response = await handleEventAdding(formattedForm)
+    showSuccessToast(response)
+    navigate("/admin/events")
+  } catch (err: any) {
+    showErrorToast(err.message)
+  } finally {
+    setLoading(false)
   }
+}
+
 
   return (
     <div className="flex justify-center items-center min-h-screen px-4">
@@ -86,13 +111,19 @@ export const AddEvent = () => {
               <div className="space-y-1.5">
                 <Label htmlFor="eventType">Event Type</Label>
                 <Select onValueChange={handleSelect}>
-                  <SelectTrigger>
+                  <SelectTrigger className='cursor-pointer w-full'>
                     <SelectValue placeholder="Select type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="0">Conference</SelectItem>
-                    <SelectItem value="1">Workshop</SelectItem>
-                    <SelectItem value="2">Seminar</SelectItem>
+                   <SelectItem className="cursor-pointer" value="0">Conference</SelectItem>
+                    <SelectItem className="cursor-pointer" value="1">Workshop</SelectItem>
+                    <SelectItem className="cursor-pointer" value="2">Seminar</SelectItem>
+                    <SelectItem className="cursor-pointer" value="3">Meetup</SelectItem>
+                    <SelectItem className="cursor-pointer" value="4">Webinar</SelectItem>
+                    <SelectItem className="cursor-pointer" value="5">Concert</SelectItem>
+                    <SelectItem className="cursor-pointer" value="6">Festival</SelectItem>
+                    <SelectItem className="cursor-pointer" value="7">Competition</SelectItem>
+                    <SelectItem className="cursor-pointer" value="8">Exhibition</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -104,12 +135,17 @@ export const AddEvent = () => {
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="eventImage">Event Image</Label>
-              <Input id="eventImage" type="file" accept="image/*" onChange={handleImageChange} />
+              <Label htmlFor="imageUrl">Event Image</Label>
+              <Input id="imageUrl" type="file" accept="image/*" onChange={handleImageChange} />
             </div>
 
-            <Button type="submit" className="w-full bg-purple-700 text-white hover:bg-purple-800">
-              Submit Event
+            <Button
+              disabled={loading}
+              type="submit"
+              className="w-full bg-purple-700 text-white hover:bg-purple-800 flex items-center justify-center gap-2 cursor-pointer"
+            >
+              {loading && <Loader2 className="h-6 w-6 animate-spin stroke-[2.5]" />}
+              {loading ? "Adding..." : "Add Event"}
             </Button>
           </form>
         </CardContent>
