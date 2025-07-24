@@ -3,7 +3,6 @@ import clsx from "clsx";
 import { getRegistrationStatusLabel } from "@/lib/helpers";
 import type { GetRegisteredUsers } from "@/models/RegisterModel";
 
-
 export function UserDetailsCard({ user }: { user: GetRegisteredUsers }) {
   return (
     <Card
@@ -34,13 +33,16 @@ export function UserDetailsCard({ user }: { user: GetRegisteredUsers }) {
           </h3>
           <div className="text-sm text-gray-700 space-y-1">
             <p>
-              <span className="font-medium">Account Name:</span> {user.accountName}
+              <span className="font-medium">Account Name:</span>{" "}
+              {user.accountName}
             </p>
             <p>
-              <span className="font-medium">Account Email:</span> {user.accountEmail}
+              <span className="font-medium">Account Email:</span>{" "}
+              {user.accountEmail}
             </p>
             <p>
-              <span className="font-medium">Account Phone:</span> {user.accountPhoneNumber}
+              <span className="font-medium">Account Phone:</span>{" "}
+              {user.accountPhoneNumber}
             </p>
           </div>
         </div>
@@ -52,7 +54,7 @@ export function UserDetailsCard({ user }: { user: GetRegisteredUsers }) {
               {
                 "bg-green-100 text-green-700": user.registerType === 0,
                 "bg-red-100 text-red-700": user.registerType === 1,
-              }
+              },
             )}
           >
             {getRegistrationStatusLabel(user.registerType)}

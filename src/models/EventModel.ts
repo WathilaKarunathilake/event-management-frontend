@@ -6,17 +6,15 @@ export interface BaseEvent {
   endDateTime: string;
   eventType: number;
   capacity: number;
-  imageUrl?: string;  
+  imageUrl?: string;
 }
 
-export interface AddEvent extends BaseEvent {
-}
+export interface AddEvent extends BaseEvent {}
 
-export interface UpdateEvent extends BaseEvent {
-}
+export interface UpdateEvent extends BaseEvent {}
 
 export interface EventDetails extends BaseEvent {
-  id: string,
+  id: string;
   createdBy: string;
-  totalRegistrations: number
+  totalRegistrations: number;
 }

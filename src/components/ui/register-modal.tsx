@@ -8,7 +8,7 @@ import { showErrorToast, showSuccessToast } from "../files/toast";
 
 interface RegisterModelProps {
   onClose: () => void;
-  eventId: string
+  eventId: string;
 }
 
 export function RegisterModel({ onClose, eventId }: RegisterModelProps) {
@@ -17,7 +17,7 @@ export function RegisterModel({ onClose, eventId }: RegisterModelProps) {
     email: "",
     phoneNumber: "",
   });
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -37,19 +37,19 @@ export function RegisterModel({ onClose, eventId }: RegisterModelProps) {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    setLoading(true)
+    setLoading(true);
     e.preventDefault();
     try {
-
-    const response = await handleRegisterForEvents({
-      ...userDetails,
-    eventId: eventId});
-    showSuccessToast(response)
+      const response = await handleRegisterForEvents({
+        ...userDetails,
+        eventId: eventId,
+      });
+      showSuccessToast(response);
     } catch (error: any) {
-      showErrorToast(error.message)
+      showErrorToast(error.message);
     } finally {
-      setLoading(false)
-      onClose()
+      setLoading(false);
+      onClose();
     }
   };
 
@@ -96,7 +96,10 @@ export function RegisterModel({ onClose, eventId }: RegisterModelProps) {
           </div>
 
           <div>
-            <label htmlFor="phoneNumber" className="block text-sm font-medium mb-1">
+            <label
+              htmlFor="phoneNumber"
+              className="block text-sm font-medium mb-1"
+            >
               Phone Number
             </label>
             <input

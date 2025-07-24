@@ -1,11 +1,11 @@
 import { useAuth } from "@/context/auth/AuthProvider";
 
 export const Footer = () => {
-  const { user } = useAuth()
+  const { user } = useAuth();
   const year = new Date().getFullYear();
 
   if (!user) {
-    return null
+    return null;
   }
 
   return (
@@ -14,14 +14,25 @@ export const Footer = () => {
         {/* Left */}
         <p className="text-center md:text-left">
           © {year} Eventify. Built with 💜 by{" "}
-          <a href="https://www.linkedin.com/in/wathila-karunathilake-5027b8296/" className="hover:text-white underline">Wathila Karunathilake</a>
+          <a
+            href="https://www.linkedin.com/in/wathila-karunathilake-5027b8296/"
+            className="hover:text-white underline"
+          >
+            Wathila Karunathilake
+          </a>
         </p>
 
         {/* Center - Social Icons */}
         <div className="flex gap-4">
-          <a href="#" className="hover:text-white"><i className="bi bi-twitter" /></a>
-          <a href="#" className="hover:text-white"><i className="bi bi-github" /></a>
-          <a href="#" className="hover:text-white"><i className="bi bi-discord" /></a>
+          <a href="#" className="hover:text-white">
+            <i className="bi bi-twitter" />
+          </a>
+          <a href="#" className="hover:text-white">
+            <i className="bi bi-github" />
+          </a>
+          <a href="#" className="hover:text-white">
+            <i className="bi bi-discord" />
+          </a>
         </div>
       </div>
     </footer>

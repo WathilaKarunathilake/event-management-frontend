@@ -44,7 +44,7 @@ export function GetRegistrations() {
 
       <ScrollArea className="max-h-[600px] space-y-6 pr-2">
         {loading ? (
-          <Loader/>
+          <Loader />
         ) : users.length === 0 ? (
           <p className="text-center text-gray-500">No registrations found.</p>
         ) : (

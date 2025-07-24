@@ -33,3 +33,10 @@ export function getEventTypeLabel(type: number): string {
       return "Unknown";
   }
 }
+
+export const toLocalInputFormat = (utc: string) => {
+  const date = new Date(utc);
+  const offset = date.getTimezoneOffset();
+  const local = new Date(date.getTime() - offset * 60000);
+  return local.toISOString().slice(0, 16); // e.g., "2025-07-24T14:30"
+};
