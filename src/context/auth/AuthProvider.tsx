@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import type { Role, User } from "@/models/AuthModel";
 import { handleGettingJwtInfo } from "@/services/AuthService";
+import { startNotificationHub, stopNotificationHub, type NotificationMessage } from "@/services/NotificationService";
+import { showInfoToast } from "@/components/files/toast";
 
 interface AuthContextType {
   user: User | null;
@@ -35,6 +37,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     getUserDetails();
   }, []);
+
+  useEffect(() => {
+    if (user?.role.includes("PUBLICUSER")) {
+      startNotificationHub((message: NotificationMessage) => {
+        console.log(message)
+        showInfoToast(message.subject, message.content)
+      });
+    }
+
+    return () => {
+      stopNotificationHub();
+    };
+  }, [user]);
 
   const login = async () => {
     try {

@@ -6,6 +6,7 @@ import {
 } from "@/services/EventService";
 import { showErrorToast, showSuccessToast } from "@/components/files/toast";
 import { defaultForm, EventForm } from "@/components/ui/event-form";
+import { toLocalDateTimeString } from "@/lib/helpers";
 
 export const UpdateEvent = () => {
   const { id } = useParams();
@@ -18,18 +19,19 @@ export const UpdateEvent = () => {
       try {
         setLoading(true);
         const data = await handleEventGettingById(id!);
+
         setForm({
           title: data.title ?? "",
           description: data.description ?? "",
           location: data.location ?? "",
-          startDateTime: data.startDateTime,
-          endDateTime: data.endDateTime,
+          startDateTime: toLocalDateTimeString(data.startDateTime ?? ""),
+  endDateTime: toLocalDateTimeString(data.endDateTime ?? ""),
           eventType: data.eventType ?? 0,
           capacity: data.capacity ?? 0,
           imageUrl: data.imageUrl ?? "",
         });
       } catch (error) {
-        showErrorToast("Failed to load event");
+        console.log(error)
       } finally {
         setLoading(false);
       }

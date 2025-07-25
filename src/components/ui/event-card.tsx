@@ -20,8 +20,23 @@ export function EventCard({ event, onOpen, setEventId }: EventCardProps) {
     totalRegistrations,
   } = event;
 
-  const formattedStart = new Date(startDateTime).toLocaleString();
-  const formattedEnd = new Date(endDateTime).toLocaleString();
+  const formattedStart = new Date(startDateTime + "Z").toLocaleString("en-US", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: true,
+});
+
+const formattedEnd = new Date(endDateTime + "Z").toLocaleString("en-US", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: true,
+});
 
   const openModel = (eventId: string) => {
     setEventId(eventId);

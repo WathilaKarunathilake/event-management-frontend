@@ -14,6 +14,7 @@ import { StatusBadge } from "./status-badge";
 import { Button } from "./button";
 import type { RegisteredEvent } from "@/models/RegisterModel";
 import type { EventDetails } from "@/models/EventModel";
+import DefaultImage from "../../assets/image.png";
 
 type EventBarProps = {
   event: RegisteredEvent | EventDetails;
@@ -31,14 +32,14 @@ export const EventBar = ({
   onCancel,
 }: EventBarProps) => {
   const isCancelable =
-    isRegisteredEvent(event) &&
-    event.registerType !== 1 &&
-    new Date(event.startDateTime) > new Date();
+  isRegisteredEvent(event) &&
+  event.registerType !== 1 &&
+  new Date(event.startDateTime + "Z") > new Date();
 
   return (
     <div className="flex flex-col sm:flex-row gap-4 p-4 border border-gray-200 rounded-2xl shadow-sm hover:shadow-md transition-all duration-200">
       <img
-        src={typeof event.imageUrl === "string" ? event.imageUrl : ""}
+        src={event.imageUrl || DefaultImage}
         alt={event.title}
         className="h-24 w-24 rounded-lg object-cover border"
       />
@@ -57,23 +58,24 @@ export const EventBar = ({
             {event.location}
           </div>
 
+
           <div className="flex items-center gap-1">
-            <CalendarDays className="h-4 w-4" />
-            {new Date(event.startDateTime).toLocaleDateString()} (
-            {getEventTypeLabel(event.eventType)})
+          <CalendarDays className="h-4 w-4" />
+          {new Date(event.startDateTime + "Z").toLocaleDateString()} (
+          {getEventTypeLabel(event.eventType)})
           </div>
 
           <div className="flex items-center gap-1">
-            <Clock className="h-4 w-4" />
-            {new Date(event.startDateTime).toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}{" "}
-            -{" "}
-            {new Date(event.endDateTime).toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
+          <Clock className="h-4 w-4" />
+          {new Date(event.startDateTime + "Z").toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}{" "}
+          -{" "}
+          {new Date(event.endDateTime + "Z").toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
           </div>
 
           <div className="flex items-center gap-1">

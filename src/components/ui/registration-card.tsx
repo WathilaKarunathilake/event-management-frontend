@@ -15,7 +15,7 @@ export function RegistrationCard({
 }: RegistrationCardProps) {
   const isCancelable =
     registration.registerType !== 1 &&
-    new Date(registration.startDateTime) > new Date();
+    new Date(registration.startDateTime + "Z") > new Date();
 
   return (
     <div className="flex flex-col sm:flex-row gap-4 p-4 border border-gray-200 rounded-2xl shadow-sm hover:shadow-md transition-all duration-200 mt-4">
@@ -36,17 +36,17 @@ export function RegistrationCard({
         </IconText>
 
         <IconText icon={<CalendarDays className="h-4 w-4" />}>
-          {new Date(registration.startDateTime).toLocaleDateString()} (
+          {new Date(registration.startDateTime + "Z").toLocaleDateString()} (
           {getEventTypeLabel(registration.eventType)})
         </IconText>
 
         <IconText icon={<Clock className="h-4 w-4" />}>
-          {new Date(registration.startDateTime).toLocaleTimeString([], {
+          {new Date(registration.startDateTime + "Z").toLocaleTimeString([], {
             hour: "2-digit",
             minute: "2-digit",
           })}{" "}
           -{" "}
-          {new Date(registration.endDateTime).toLocaleTimeString([], {
+          {new Date(registration.endDateTime + "Z").toLocaleTimeString([], {
             hour: "2-digit",
             minute: "2-digit",
           })}
