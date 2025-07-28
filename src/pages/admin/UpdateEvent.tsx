@@ -30,6 +30,7 @@ export const UpdateEvent = () => {
           capacity: data.capacity ?? 0,
           imageUrl: data.imageUrl ?? "",
         });
+        console.log(data.eventType)
       } catch (error) {
         console.log(error)
       } finally {
@@ -41,6 +42,7 @@ export const UpdateEvent = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log(form)
     setLoading(true);
     try {
       const payload = {

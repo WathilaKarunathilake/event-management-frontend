@@ -136,7 +136,7 @@ export function EventForm({
                 <Label htmlFor="eventType">Event Type</Label>
                 <Select
                   onValueChange={handleSelect}
-                  defaultValue={form.eventType.toString()}
+                  value={form.eventType.toString()}
                 >
                   <SelectTrigger className="cursor-pointer w-full">
                     <SelectValue placeholder="Select type" />
@@ -215,7 +215,7 @@ export function EventForm({
             <Button
               disabled={loading}
               type="submit"
-              className="w-full bg-purple-700 text-white hover:bg-purple-800 flex items-center justify-center gap-2"
+              className="cursor-pointer w-full bg-purple-700 text-white hover:bg-purple-800 flex items-center justify-center gap-2"
             >
               {loading && (
                 <Loader2 className="h-6 w-6 animate-spin stroke-[2.5]" />

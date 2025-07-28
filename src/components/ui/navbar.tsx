@@ -7,6 +7,7 @@ import {
   UserRoundPlus,
   LogOut,
   CalendarPlus,
+  Calendar,
 } from "lucide-react";
 import { handleLogout } from "@/services/AuthService";
 import { showSuccessToast } from "../files/toast";
@@ -55,6 +56,12 @@ export const Navbar = () => {
                     className={navLinkClass("/user/registrations")}
                   >
                     <Ticket className="w-4 h-4" /> Registrations
+                  </Link>
+                  <Link
+                    to="/user/calendar"
+                    className={navLinkClass("/user/calendar")}
+                  >
+                    <Calendar className="w-4 h-4" /> Calendar
                   </Link>
                 </>
               ) : (

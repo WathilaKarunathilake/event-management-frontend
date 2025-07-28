@@ -39,12 +39,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   useEffect(() => {
-    if (user?.role.includes("PUBLICUSER")) {
       startNotificationHub((message: NotificationMessage) => {
         console.log(message)
         showInfoToast(message.subject, message.content)
       });
-    }
+    
 
     return () => {
       stopNotificationHub();

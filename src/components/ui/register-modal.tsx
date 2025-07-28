@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { X } from "lucide-react";
+import { Loader2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { UserDetails } from "@/models/AuthModel";
 import { handeGettingUserInfo } from "@/services/AuthService";
@@ -9,9 +9,10 @@ import { showErrorToast, showSuccessToast } from "../files/toast";
 interface RegisterModelProps {
   onClose: () => void;
   eventId: string;
+  fetchEvents: () => void;
 }
 
-export function RegisterModel({ onClose, eventId }: RegisterModelProps) {
+export function RegisterModel({ onClose, eventId, fetchEvents }: RegisterModelProps) {
   const [userDetails, setUserDetails] = useState<UserDetails>({
     name: "",
     email: "",
@@ -45,6 +46,7 @@ export function RegisterModel({ onClose, eventId }: RegisterModelProps) {
         eventId: eventId,
       });
       showSuccessToast(response);
+      fetchEvents()
     } catch (error: any) {
       showErrorToast(error.message);
     } finally {
@@ -117,6 +119,9 @@ export function RegisterModel({ onClose, eventId }: RegisterModelProps) {
             disabled={loading}
             className="bg-purple-700 hover:bg-purple-800 text-white w-full cursor-pointer"
           >
+            {loading && (
+                <Loader2 className="h-6 w-6 animate-spin stroke-[2.5]" />
+              )}
             Register Now
           </Button>
         </form>

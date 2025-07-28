@@ -9,19 +9,22 @@ import {
   CalendarDays,
   XCircle,
 } from "lucide-react";
-import { getEventTypeLabel, getRegistrationStatusLabel } from "@/lib/helpers";
+import { getEventTypeLabel, getRegistrationStatusLabel, truncateDescription } from "@/lib/helpers";
 import { StatusBadge } from "./status-badge";
 import { Button } from "./button";
 import type { RegisteredEvent } from "@/models/RegisterModel";
 import type { EventDetails } from "@/models/EventModel";
 import DefaultImage from "../../assets/image.png";
+import { useState } from "react";
+import EventDetailsModal from "./event-model";
 
 type EventBarProps = {
   event: RegisteredEvent | EventDetails;
-  onEdit?: (id: string) => void;
-  onDelete?: (id: string) => void;
-  onViewRegistrations?: (id: string) => void;
-  onCancel?: (id: string) => void;
+  onEdit?: (e:any, id: string) => void;
+  onDelete?: (e:any, id: string) => void;
+  onViewRegistrations?: (e:any, id: string) => void;
+  onCancel?: (e: any, id: string) => void;
+  onDownloadICS?: (event:  RegisteredEvent) => void;
 };
 
 export const EventBar = ({
@@ -30,14 +33,18 @@ export const EventBar = ({
   onDelete,
   onViewRegistrations,
   onCancel,
+  onDownloadICS
 }: EventBarProps) => {
+  const [eventsModal, setEventModal] = useState(false)
+
   const isCancelable =
   isRegisteredEvent(event) &&
   event.registerType !== 1 &&
   new Date(event.startDateTime + "Z") > new Date();
 
   return (
-    <div className="flex flex-col sm:flex-row gap-4 p-4 border border-gray-200 rounded-2xl shadow-sm hover:shadow-md transition-all duration-200">
+    <>
+    <div className="cursor-pointer flex flex-col sm:flex-row gap-4 p-4 border border-gray-200 rounded-2xl shadow-sm hover:shadow-md transition-all duration-200" onClick={() => setEventModal(true)}>
       <img
         src={event.imageUrl || DefaultImage}
         alt={event.title}
@@ -48,7 +55,7 @@ export const EventBar = ({
         <h3 className="text-lg font-semibold">{event.title}</h3>
         {event.description && (
           <p className="text-gray-500 break-all whitespace-pre-wrap">
-            {event.description}
+            {truncateDescription(event.description!, 40)}
           </p>
         )}
 
@@ -96,7 +103,7 @@ export const EventBar = ({
               className=" cursor-pointer"
               variant="outline"
               size="icon"
-              onClick={() => onViewRegistrations(event.id)}
+              onClick={(e) => onViewRegistrations(e, event.id)}
               aria-label="View Registrations"
             >
               <Users className="w-4 h-4 cursor-pointer" />
@@ -107,7 +114,7 @@ export const EventBar = ({
               className=" cursor-pointer"
               variant="outline"
               size="icon"
-              onClick={() => onEdit(event.id)}
+              onClick={(e) => onEdit(e, event.id)}
               aria-label="Edit Event"
             >
               <Pencil className="w-4 h-4 cursor-pointer" />
@@ -118,7 +125,7 @@ export const EventBar = ({
               className=" cursor-pointer"
               variant="outline"
               size="icon"
-              onClick={() => onDelete(event.id)}
+              onClick={(e) => onDelete(e, event.id)}
               aria-label="Delete Event"
             >
               <Trash2 className="w-4 h-4 cursor-pointer" />
@@ -136,13 +143,32 @@ export const EventBar = ({
             {isCancelable && (
               <XCircle
                 className="h-5 w-5 text-gray-400 hover:text-red-600 transition cursor-pointer"
-                onClick={() => onCancel?.(event.id)}
+                onClick={(e) => onCancel?.(e, event.id)}
               />
             )}
           </div>
         )}
+
+        {onDownloadICS && isRegisteredEvent(event)  && (
+  <Button
+    className="cursor-pointer mt-2"
+    variant="outline"
+    size="icon"
+    onClick={(e) => {
+      e.stopPropagation(); 
+      onDownloadICS(event); 
+    }}
+    aria-label="Download ICS"
+    title="Add to Calendar (.ics)"
+  >
+    <CalendarDays className="w-4 h-4" /> 
+  </Button>
+)}
       </div>
     </div>
+
+    {eventsModal && <EventDetailsModal event={event} open={eventsModal} onClose={() => setEventModal(false)}/>}
+    </>
   );
 };
 

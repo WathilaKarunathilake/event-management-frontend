@@ -12,15 +12,19 @@ export const GetEvents = () => {
   const [events, setEvents] = useState<EventDetails[]>([]);
   const navigate = useNavigate();
 
-  const navigateToUpdate = (id: string) => {
+  const navigateToUpdate = (e: any, id: string) => {
+    e.stopPropagation(); 
     navigate("/admin/events/update-event/" + id);
   };
 
-  const navigateToViewRegistrations = (id: string) => {
+  const navigateToViewRegistrations = (e: any, id: string) => {
+    e.stopPropagation(); 
     navigate("/admin/events/registrations/" + id);
   };
 
-  const deleteEvent = async (id: string) => {
+  const deleteEvent = async (e:any, id: string) => {
+    e.stopPropagation(); 
+
     try {
       const response = await handleDeletingEvents(id);
       showSuccessToast(response);

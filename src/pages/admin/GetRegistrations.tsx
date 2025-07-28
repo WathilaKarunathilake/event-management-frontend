@@ -46,7 +46,7 @@ export function GetRegistrations() {
         {loading ? (
           <Loader />
         ) : users.length === 0 ? (
-          <p className="text-center text-gray-500">No registrations found.</p>
+          <p className="text-gray-500">No registrations found.</p>
         ) : (
           users.map((user) => <UserDetailsCard key={user.email} user={user} />)
         )}

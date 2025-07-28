@@ -10,6 +10,7 @@ import ViewEvents from "@/pages/user/ViewEvents";
 import { UpdateEvent } from "@/pages/admin/UpdateEvent";
 import { GetRegistrations } from "@/pages/admin/GetRegistrations";
 import { ProtectedRoute } from "@/context/auth/ProtectedRoute";
+import ViewCalendar from "@/pages/user/ViewCalendar";
 
 export const AppRoutes = () => {
   return (
@@ -71,6 +72,15 @@ export const AppRoutes = () => {
         element={
           <ProtectedRoute roles={["PUBLICUSER"]}>
             <ViewRegistrations />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/user/calendar"
+        element={
+          <ProtectedRoute roles={["PUBLICUSER"]}>
+            <ViewCalendar />
           </ProtectedRoute>
         }
       />
