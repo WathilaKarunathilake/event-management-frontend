@@ -25,14 +25,14 @@ export const UpdateEvent = () => {
           description: data.description ?? "",
           location: data.location ?? "",
           startDateTime: toLocalDateTimeString(data.startDateTime ?? ""),
-  endDateTime: toLocalDateTimeString(data.endDateTime ?? ""),
+          endDateTime: toLocalDateTimeString(data.endDateTime ?? ""),
           eventType: data.eventType ?? 0,
           capacity: data.capacity ?? 0,
           imageUrl: data.imageUrl ?? "",
         });
-        console.log(data.eventType)
+        console.log(data.eventType);
       } catch (error) {
-        console.log(error)
+        console.log(error);
       } finally {
         setLoading(false);
       }
@@ -42,7 +42,7 @@ export const UpdateEvent = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(form)
+    console.log(form);
     setLoading(true);
     try {
       const payload = {

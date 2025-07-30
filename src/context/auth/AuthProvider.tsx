@@ -1,8 +1,12 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import type { Role, User } from "@/models/AuthModel";
-import { handleGettingJwtInfo } from "@/services/AuthService";
-import { startNotificationHub, stopNotificationHub, type NotificationMessage } from "@/services/NotificationService";
-import { showInfoToast } from "@/components/files/toast";
+import { handleGettingJwtInfo, handleLogout } from "@/services/AuthService";
+import {
+  startNotificationHub,
+  stopNotificationHub,
+  type NotificationMessage,
+} from "@/services/NotificationService";
+import { showInfoToast, showSuccessToast } from "@/components/files/toast";
 
 interface AuthContextType {
   user: User | null;
@@ -39,11 +43,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   useEffect(() => {
-      startNotificationHub((message: NotificationMessage) => {
-        console.log(message)
-        showInfoToast(message.subject, message.content)
-      });
-    
+    startNotificationHub((message: NotificationMessage) => {
+      console.log(message);
+      showInfoToast(message.subject, message.content);
+    });
 
     return () => {
       stopNotificationHub();
@@ -59,6 +62,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const logout = async () => {
+    const response = await handleLogout();
+    showSuccessToast(response);
     setUser(null);
   };
 

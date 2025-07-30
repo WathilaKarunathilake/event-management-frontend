@@ -1,6 +1,6 @@
 import type { RegisteredEvent } from "@/models/RegisterModel";
-import { createEvent } from 'ics';
-import type {EventAttributes} from 'ics'
+import { createEvent } from "ics";
+import type { EventAttributes } from "ics";
 
 export function getRegistrationStatusLabel(status: number): string {
   switch (status) {
@@ -46,18 +46,24 @@ export const toLocalInputFormat = (utc: string) => {
 };
 
 export const truncateDescription = (
-    description: string,
-    wordLimit: number
-  ): string => {
-    if (!description) return ''
-    const words = description.trim().split(/\s+/)
-    if (words.length <= wordLimit) return description
-    return words.slice(0, wordLimit).join(' ') + ' ...'
+  description: string,
+  wordLimit: number,
+): string => {
+  if (!description) return "";
+
+  if (description.length > 300) {
+    const words = description.slice(0, 300) + " ...";
+    return words;
   }
+
+  const words = description.trim().split(/\s+/);
+  if (words.length <= wordLimit) return description;
+  return words.slice(0, wordLimit).join(" ") + " ...";
+};
 
 export function toLocalDateTimeString(utcString: string): string {
   try {
-    const clean = utcString.trim(); 
+    const clean = utcString.trim();
     const utc = new Date(clean + "Z"); // Append Z to force UTC
     const offset = utc.getTimezoneOffset(); // in minutes
     const local = new Date(utc.getTime() - offset * 60000);
@@ -68,15 +74,14 @@ export function toLocalDateTimeString(utcString: string): string {
   }
 }
 
-
 export function downloadSingleEventAsICS(event: RegisteredEvent) {
   const startDate = new Date(event.startDateTime);
   const endDate = new Date(event.endDateTime);
 
   const icsEvent: EventAttributes = {
     title: event.title,
-    description: event.description || '',
-    location: event.location || '',
+    description: event.description || "",
+    location: event.location || "",
     start: [
       startDate.getFullYear(),
       startDate.getMonth() + 1,
@@ -95,14 +100,14 @@ export function downloadSingleEventAsICS(event: RegisteredEvent) {
 
   createEvent(icsEvent, (error, value) => {
     if (error) {
-      console.error('ICS generation error:', error);
+      console.error("ICS generation error:", error);
       return;
     }
 
-    const blob = new Blob([value], { type: 'text/calendar;charset=utf-8' });
-    const link = document.createElement('a');
+    const blob = new Blob([value], { type: "text/calendar;charset=utf-8" });
+    const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = `${event.title || 'event'}.ics`;
+    link.download = `${event.title || "event"}.ics`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

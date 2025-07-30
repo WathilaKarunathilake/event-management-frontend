@@ -9,24 +9,64 @@ import { Loader } from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { SearchBox } from "@/components/ui/search-box";
+import { handleGettingRegistrationsByUserId } from "@/services/RegistrationService";
+import type { RegisteredEvent } from "@/models/RegisterModel";
 
-type SortOption = "date-asc" | "date-desc" | "name-asc" | "name-desc";
+type SortOption =
+  | "all"
+  | "upc-only"
+  | "exp-only"
+  | "date-asc"
+  | "date-desc"
+  | "name-asc"
+  | "name-desc";
 
 export default function ViewEvents() {
   const [events, setEvents] = useState<EventDetails[]>([]);
+  const [allEvents, setAllEvents] = useState<EventDetails[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [eventId, setEventId] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortBy, setSortBy] = useState<SortOption>("date-asc");
+  const [sortBy, setSortBy] = useState<SortOption>("all");
+  const [registrations, setRegistrations] = useState<RegisteredEvent[]>([]);
+
+  const [totalCount, setTotalCount] = useState(0);
+  const [page, setPage] = useState(1);
+  const pageSize = 2;
 
   const handleOpenModal = () => setModalOpen(true);
 
   const fetchEvents = async () => {
     try {
       setLoading(true);
+      const response = await handleEventGetting(page, pageSize);
+      setEvents(response.items);
+      setTotalCount(response.totalCount);
+    } catch (err: any) {
+      showErrorToast(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchAllEvents = async () => {
+    try {
+      setLoading(true);
       const response = await handleEventGetting();
-      setEvents(response);
+      setAllEvents(response.items);
+    } catch (err: any) {
+      showErrorToast(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchRegistrations = async () => {
+    try {
+      setLoading(true);
+      const response = await handleGettingRegistrationsByUserId();
+      setRegistrations(response);
     } catch (err: any) {
       showErrorToast(err.message);
     } finally {
@@ -42,6 +82,12 @@ export default function ViewEvents() {
         event.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         event.location?.toLowerCase().includes(searchTerm.toLowerCase()),
     );
+
+    if (sortBy === "upc-only") {
+      filtered = filtered.filter((e) => new Date(e.startDateTime) > new Date());
+    } else if (sortBy === "exp-only") {
+      filtered = filtered.filter((e) => new Date(e.startDateTime) < new Date());
+    }
 
     filtered.sort((a, b) => {
       switch (sortBy) {
@@ -69,23 +115,43 @@ export default function ViewEvents() {
 
   useEffect(() => {
     fetchEvents();
+    fetchRegistrations();
   }, []);
+
+  useEffect(() => {
+    fetchEvents();
+  }, [page]);
+
+  useEffect(() => {
+    const shouldFetchAll = searchTerm.trim() !== "" || sortBy !== "all";
+    if (shouldFetchAll && allEvents.length === 0) {
+      fetchAllEvents();
+    }
+  }, [searchTerm, sortBy]);
+
+  const totalPages = Math.ceil(totalCount / pageSize);
 
   return (
     <>
       <div className="container mx-auto px-4 py-10">
         {/* Search and Filter Section */}
-          <SearchBox
-  searchTerm={searchTerm}
-  onSearchChange={setSearchTerm}
-  sortBy={sortBy}
-  onSortChange={setSortBy}
-/>
+        <SearchBox
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          sortBy={sortBy}
+          onSortChange={setSortBy}
+        />
 
         {/* Results Section */}
         <div className="mb-6 px-1 flex justify-between items-center">
           <h3 className="text-2xl font-semibold text-gray-800">
-            {searchTerm ? "Search Results" : "Upcoming Events"}
+            {searchTerm
+              ? "Search Results"
+              : sortBy === "upc-only"
+                ? "Upcoming Events"
+                : sortBy === "exp-only"
+                  ? "Expired Events"
+                  : "All Events"}
           </h3>
           {!loading && (
             <div className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
@@ -135,16 +201,19 @@ export default function ViewEvents() {
                   event={event}
                   onOpen={handleOpenModal}
                   setEventId={setEventId}
+                  isUserRegistered={registrations.some(
+                    (reg) => reg.id === event.id,
+                  )}
                 />
               ))}
             </div>
 
             {/* Show more info if filtered */}
-            {searchTerm && filteredAndSortedEvents.length < events.length && (
+            {searchTerm && filteredAndSortedEvents.length < totalCount && (
               <Card className="mt-8 p-4 bg-yellow-50 rounded-lg border border-yellow-200 max-w-xl mx-auto text-center">
                 <p className="text-yellow-800">
                   <span className="font-medium">
-                    {events.length - filteredAndSortedEvents.length}
+                    {events.length - totalCount}
                   </span>{" "}
                   more events available.
                   <Button
@@ -160,10 +229,48 @@ export default function ViewEvents() {
             )}
           </>
         )}
+
+        {totalPages > 1 && (
+          <div className="flex justify-center mt-8 gap-2">
+            <Button
+              disabled={page === 1}
+              onClick={() => setPage(page - 1)}
+              variant="outline"
+              className="cursor-pointer"
+            >
+              Previous
+            </Button>
+
+            {[...Array(totalPages)].map((_, i) => (
+              <Button
+                key={i}
+                variant={page === i + 1 ? "default" : "outline"}
+                onClick={() => setPage(i + 1)}
+                className="cursor-pointer"
+              >
+                {i + 1}
+              </Button>
+            ))}
+
+            <Button
+              disabled={page === totalPages}
+              onClick={() => setPage(page + 1)}
+              variant="outline"
+              className="cursor-pointer"
+            >
+              Next
+            </Button>
+          </div>
+        )}
       </div>
 
       {modalOpen && (
-        <RegisterModel onClose={() => setModalOpen(false)} eventId={eventId} fetchEvents={fetchEvents}/>
+        <RegisterModel
+          fetchRegs={fetchRegistrations}
+          onClose={() => setModalOpen(false)}
+          eventId={eventId}
+          fetchEvents={fetchEvents}
+        />
       )}
     </>
   );

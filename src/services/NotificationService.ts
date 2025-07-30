@@ -3,11 +3,11 @@ import { HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
 let connection: HubConnection | null = null;
 
 export const startNotificationHub = async (
-  onMessage: (message: NotificationMessage) => void
+  onMessage: (message: NotificationMessage) => void,
 ) => {
   connection = new HubConnectionBuilder()
     .withUrl(`${import.meta.env.VITE_NOTI_HUB}`, {
-      withCredentials: true, 
+      withCredentials: true,
     })
     .withAutomaticReconnect()
     .build();

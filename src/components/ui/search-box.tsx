@@ -10,7 +10,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-type SortOption = "date-asc" | "date-desc" | "name-asc" | "name-desc";
+type SortOption =
+  | "all"
+  | "upc-only"
+  | "exp-only"
+  | "date-asc"
+  | "date-desc"
+  | "name-asc"
+  | "name-desc";
 
 interface Props {
   searchTerm: string;
@@ -109,15 +116,32 @@ export function SearchBox({
               value={sortBy}
               onValueChange={(value) => onSortChange(value as SortOption)}
             >
-              <SelectTrigger id="sortSelect" className="w-full">
+              <SelectTrigger id="sortSelect" className="w-full cursor-pointer">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="cursor-pointer">
                 <SelectGroup>
-                  <SelectItem value="date-asc">Date (Oldest First)</SelectItem>
-                  <SelectItem value="date-desc">Date (Newest First)</SelectItem>
-                  <SelectItem value="name-asc">Name (A-Z)</SelectItem>
-                  <SelectItem value="name-desc">Name (Z-A)</SelectItem>
+                  <SelectItem className="cursor-pointer" value="all">
+                    All Events
+                  </SelectItem>
+                  <SelectItem className="cursor-pointer" value="upc-only">
+                    Upcomming Only
+                  </SelectItem>
+                  <SelectItem className="cursor-pointer" value="exp-only">
+                    Expired Only
+                  </SelectItem>
+                  <SelectItem className="cursor-pointer" value="date-asc">
+                    Date (Oldest First)
+                  </SelectItem>
+                  <SelectItem className="cursor-pointer" value="date-desc">
+                    Date (Newest First)
+                  </SelectItem>
+                  <SelectItem className="cursor-pointer" value="name-asc">
+                    Name (A-Z)
+                  </SelectItem>
+                  <SelectItem className="cursor-pointer" value="name-desc">
+                    Name (Z-A)
+                  </SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>

@@ -42,7 +42,7 @@ export function GetRegistrations() {
         Total Registered Users: {users.length}
       </div>
 
-      <ScrollArea className="max-h-[600px] space-y-6 pr-2">
+      <ScrollArea className="space-y-6 pr-2">
         {loading ? (
           <Loader />
         ) : users.length === 0 ? (

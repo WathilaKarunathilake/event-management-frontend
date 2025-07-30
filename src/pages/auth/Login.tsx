@@ -17,7 +17,7 @@ export const Login = () => {
   const [form, setForm] = useState({
     email: "",
     password: "",
-    rememberMe: false,
+    rememberMe: true,
   });
 
   const [loading, setLoading] = useState(false);
@@ -56,7 +56,7 @@ export const Login = () => {
   };
 
   return (
-    <div className="flex justify-center px-4 py-12">
+    <div className="flex justify-center px-4 py-18">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle className="text-center text-2xl font-semibold">

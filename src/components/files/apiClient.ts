@@ -12,18 +12,27 @@ const apiClient = axios.create({
 
 apiClient.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
     const originalRequest = error.config;
 
-    const isSilentAuth = originalRequest?.url?.includes("/me");
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
 
-    if (error.response?.status === 401) {
-      if (!isSilentAuth) {
+      try {
+        await axios.post(
+          `${import.meta.env.VITE_BACKEND_URL}/auth/refresh`,
+          null,
+          { withCredentials: true },
+        );
+        return apiClient(originalRequest);
+      } catch (refreshError) {
         logoutUser();
-        window.location.href = "/login";
         showErrorToast("User session timeout");
+        return Promise.reject(refreshError);
       }
-    } else if (error.response?.status === 403) {
+    }
+
+    if (error.response?.status === 403) {
       throw new Error("You don't have access to view this");
     }
 

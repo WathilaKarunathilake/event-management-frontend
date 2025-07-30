@@ -79,7 +79,7 @@ export const Register = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen px-4 py-6">
+    <div className="flex justify-center items-center min-h-screen px-4 py-10">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle className="text-center text-xl">

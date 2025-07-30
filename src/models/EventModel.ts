@@ -7,6 +7,7 @@ export interface BaseEvent {
   eventType: number;
   capacity: number;
   imageUrl?: string;
+  creatorName?: string;
 }
 
 export interface AddEvent extends BaseEvent {}
@@ -17,4 +18,17 @@ export interface EventDetails extends BaseEvent {
   id: string;
   createdBy: string;
   totalRegistrations: number;
+}
+
+export interface EventItems {
+  items: EventDetails[];
+  totalCount: number;
+}
+
+export interface EventSummary {
+  totalEvents: number;
+  activeEvents: number;
+  filledEvents: number;
+  upcommingEvents: number;
+  totalAttendees: number;
 }

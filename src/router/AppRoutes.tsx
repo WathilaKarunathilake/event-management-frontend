@@ -11,6 +11,8 @@ import { UpdateEvent } from "@/pages/admin/UpdateEvent";
 import { GetRegistrations } from "@/pages/admin/GetRegistrations";
 import { ProtectedRoute } from "@/context/auth/ProtectedRoute";
 import ViewCalendar from "@/pages/user/ViewCalendar";
+import HomePage from "@/pages/user/Home";
+import { OrganizerDashboard } from "@/pages/admin/OrganizerDashboard";
 
 export const AppRoutes = () => {
   return (
@@ -26,6 +28,15 @@ export const AppRoutes = () => {
         element={
           <ProtectedRoute roles={["ADMIN"]}>
             <AddEvent />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/admin/dashboard"
+        element={
+          <ProtectedRoute roles={["ADMIN"]}>
+            <OrganizerDashboard />
           </ProtectedRoute>
         }
       />
@@ -63,6 +74,15 @@ export const AppRoutes = () => {
         element={
           <ProtectedRoute roles={["PUBLICUSER"]}>
             <ViewEvents />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/user/home"
+        element={
+          <ProtectedRoute roles={["PUBLICUSER"]}>
+            <HomePage />
           </ProtectedRoute>
         }
       />

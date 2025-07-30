@@ -8,8 +8,21 @@ export const addEvent = async (data: AddEvent): Promise<any> => {
   return response;
 };
 
-export const getEvents = async (): Promise<any> => {
-  const response = await apiClient.get(`${BASE_URL}/events`);
+export const getEvents = async (
+  page?: number,
+  pageSize?: number,
+): Promise<any> => {
+  const params = new URLSearchParams();
+
+  if (page !== undefined) params.append("page", page.toString());
+  if (pageSize !== undefined) params.append("pageSize", pageSize.toString());
+
+  const queryString = params.toString();
+  const url = queryString
+    ? `${BASE_URL}/events?${queryString}`
+    : `${BASE_URL}/events`;
+
+  const response = await apiClient.get(url);
   return response;
 };
 
@@ -33,5 +46,10 @@ export const updateEvent = async (
 
 export const deleteEvent = async (id: string): Promise<any> => {
   const response = await apiClient.delete(`${BASE_URL}/events/${id}`);
+  return response;
+};
+
+export const getEventsSummary = async (): Promise<any> => {
+  const response = await apiClient.get(`${BASE_URL}/events/summary`);
   return response;
 };

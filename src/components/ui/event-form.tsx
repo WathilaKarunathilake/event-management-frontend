@@ -70,8 +70,8 @@ export function EventForm({
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen px-4 mt-10">
-      <Card className="w-full max-w-2xl">
+    <div className="flex justify-center items-start min-h-screen px-4 sm:px-6 lg:px-8 py-10">
+      <Card className="w-full max-w-3xl">
         <CardHeader>
           <CardTitle className="text-center text-2xl">{title}</CardTitle>
         </CardHeader>
@@ -108,7 +108,7 @@ export function EventForm({
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <Label htmlFor="startDateTime">Start Date & Time</Label>
                 <Input
@@ -116,7 +116,6 @@ export function EventForm({
                   type="datetime-local"
                   value={form.startDateTime}
                   onChange={handleChange}
-                  placeholder="Select start date and time"
                 />
               </div>
               <div className="space-y-1.5">
@@ -126,12 +125,11 @@ export function EventForm({
                   type="datetime-local"
                   value={form.endDateTime}
                   onChange={handleChange}
-                  placeholder="Select end date and time"
                 />
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <Label htmlFor="eventType">Event Type</Label>
                 <Select
@@ -179,10 +177,10 @@ export function EventForm({
 
             <div className="space-y-1.5">
               <Label htmlFor="imageUrl">Event Image</Label>
-              <div className="flex items-center gap-4">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
                 <label
                   htmlFor="imageUrl"
-                  className="bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded cursor-pointer"
+                  className="bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded cursor-pointer text-sm"
                 >
                   Choose File
                 </label>
@@ -218,7 +216,7 @@ export function EventForm({
               className="cursor-pointer w-full bg-purple-700 text-white hover:bg-purple-800 flex items-center justify-center gap-2"
             >
               {loading && (
-                <Loader2 className="h-6 w-6 animate-spin stroke-[2.5]" />
+                <Loader2 className="h-5 w-5 animate-spin stroke-[2.5]" />
               )}
               {loading ? `${submitText}...` : submitText}
             </Button>

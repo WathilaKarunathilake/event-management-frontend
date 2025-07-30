@@ -3,10 +3,17 @@ import {
   deleteEvent,
   getEventById,
   getEvents,
+  getEventsSummary,
   getPostedEventById,
   updateEvent,
 } from "@/features/EventsAPI";
-import type { AddEvent, EventDetails, UpdateEvent } from "@/models/EventModel";
+import type {
+  AddEvent,
+  EventDetails,
+  EventItems,
+  EventSummary,
+  UpdateEvent,
+} from "@/models/EventModel";
 
 export const handleEventAdding = async (payload: AddEvent): Promise<string> => {
   try {
@@ -37,9 +44,12 @@ export const handleEventUpdating = async (
   }
 };
 
-export const handleEventGetting = async (): Promise<EventDetails[]> => {
+export const handleEventGetting = async (
+  page?: number,
+  pageSize?: number,
+): Promise<EventItems> => {
   try {
-    const response = await getEvents();
+    const response = await getEvents(page, pageSize);
     if (!response.data.success) {
       throw new Error(response.data.data);
     }
@@ -68,6 +78,19 @@ export const handleEventGettingById = async (
 export const handleGettingPostedEvents = async (): Promise<EventDetails[]> => {
   try {
     const response = await getPostedEventById();
+    if (!response.data.success) {
+      throw new Error(response.data.data);
+    }
+
+    return response.data.data;
+  } catch (error: any) {
+    throw new Error(error.response.data.data);
+  }
+};
+
+export const handleGettingEventsSummary = async (): Promise<EventSummary> => {
+  try {
+    const response = await getEventsSummary();
     if (!response.data.success) {
       throw new Error(response.data.data);
     }

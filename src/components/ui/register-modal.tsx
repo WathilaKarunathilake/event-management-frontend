@@ -10,9 +10,15 @@ interface RegisterModelProps {
   onClose: () => void;
   eventId: string;
   fetchEvents: () => void;
+  fetchRegs?: () => void;
 }
 
-export function RegisterModel({ onClose, eventId, fetchEvents }: RegisterModelProps) {
+export function RegisterModel({
+  onClose,
+  eventId,
+  fetchEvents,
+  fetchRegs,
+}: RegisterModelProps) {
   const [userDetails, setUserDetails] = useState<UserDetails>({
     name: "",
     email: "",
@@ -46,7 +52,8 @@ export function RegisterModel({ onClose, eventId, fetchEvents }: RegisterModelPr
         eventId: eventId,
       });
       showSuccessToast(response);
-      fetchEvents()
+      fetchEvents();
+      fetchRegs && fetchRegs();
     } catch (error: any) {
       showErrorToast(error.message);
     } finally {
@@ -66,7 +73,7 @@ export function RegisterModel({ onClose, eventId, fetchEvents }: RegisterModelPr
           <X className="w-5 h-5 cursor-pointer" />
         </button>
 
-        <h2 className="text-xl font-semibold mb-6 text-center">Buy Now</h2>
+        <h2 className="text-xl font-semibold mb-6 text-center">Register Now</h2>
 
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
@@ -120,8 +127,8 @@ export function RegisterModel({ onClose, eventId, fetchEvents }: RegisterModelPr
             className="bg-purple-700 hover:bg-purple-800 text-white w-full cursor-pointer"
           >
             {loading && (
-                <Loader2 className="h-6 w-6 animate-spin stroke-[2.5]" />
-              )}
+              <Loader2 className="h-6 w-6 animate-spin stroke-[2.5]" />
+            )}
             Register Now
           </Button>
         </form>

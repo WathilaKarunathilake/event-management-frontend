@@ -4,10 +4,10 @@ export const navigateByRole = (
 ): void => {
   switch (role) {
     case "ADMIN":
-      navigate("/admin/events");
+      navigate("/admin/dashboard");
       break;
     case "PUBLICUSER":
-      navigate("/user/events");
+      navigate("/user/home");
       break;
     default:
       navigate("/unauthorized");
