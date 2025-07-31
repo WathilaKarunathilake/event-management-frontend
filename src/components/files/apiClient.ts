@@ -1,6 +1,5 @@
 import { logoutUser } from "@/context/auth/AuthProvider";
 import axios from "axios";
-import { showErrorToast } from "./toast";
 
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_URL,
@@ -26,8 +25,7 @@ apiClient.interceptors.response.use(
         );
         return apiClient(originalRequest);
       } catch (refreshError) {
-        logoutUser();
-        showErrorToast("User session timeout");
+        logoutUser("User session timeout");
         return Promise.reject(refreshError);
       }
     }

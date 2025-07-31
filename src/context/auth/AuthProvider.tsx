@@ -7,6 +7,8 @@ import {
   type NotificationMessage,
 } from "@/services/NotificationService";
 import { showInfoToast, showSuccessToast } from "@/components/files/toast";
+import { getItem, setItem } from "@/storage/Storage";
+import useSound from 'use-sound';
 
 interface AuthContextType {
   user: User | null;
@@ -18,17 +20,18 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-let globalLogout: (() => void) | null = null;
+let globalLogout: ((msg?: string) => void) | null = null;
+const notificationSoundUrl = 'https://actions.google.com/sounds/v1/alarms/beep_short.ogg';
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [play] = useSound(notificationSoundUrl);
 
   const getUserDetails = async () => {
     try {
       setLoading(true);
       const response = await handleGettingJwtInfo();
-      console.log(response);
       setUser(response);
     } catch (error) {
       console.error("Failed to get user details", error);
@@ -44,26 +47,30 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     startNotificationHub((message: NotificationMessage) => {
-      console.log(message);
       showInfoToast(message.subject, message.content);
+       play();
     });
 
     return () => {
       stopNotificationHub();
     };
-  }, [user]);
+  }, [user, play]);
 
   const login = async () => {
     try {
       await getUserDetails();
+      setItem("lg", "true")
     } catch (e) {
       console.error("Login error", e);
     }
   };
 
-  const logout = async () => {
+  const logout = async (msg?: string) => {
     const response = await handleLogout();
-    showSuccessToast(response);
+    if (getItem("lg") === "true") {
+      showSuccessToast(msg ?? response);
+      setItem("lg", "false")
+    }
     setUser(null);
   };
 
@@ -86,6 +93,6 @@ export const useAuth = () => {
   return ctx;
 };
 
-export function logoutUser() {
-  if (globalLogout) globalLogout();
+export function logoutUser(msg?: string) {
+  if (globalLogout) globalLogout(msg);
 }

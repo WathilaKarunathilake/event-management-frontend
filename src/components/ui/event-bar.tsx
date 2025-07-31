@@ -30,6 +30,7 @@ type EventBarProps = {
   onViewRegistrations?: (e: any, id: string) => void;
   onCancel?: (e: any, id: string) => void;
   onDownloadICS?: (event: RegisteredEvent) => void;
+  loading: boolean;
 };
 
 export const EventBar = ({
@@ -38,6 +39,7 @@ export const EventBar = ({
   onDelete,
   onViewRegistrations,
   onCancel,
+  loading, 
   onDownloadICS,
 }: EventBarProps) => {
   const [eventsModal, setEventModal] = useState(false);
@@ -143,6 +145,7 @@ export const EventBar = ({
                 variant="outline"
                 size="icon"
                 onClick={(e) => onDelete(e, event.id)}
+                disabled={loading}
                 aria-label="Delete Event"
               >
                 <Trash2 className="w-4 h-4 cursor-pointer" />

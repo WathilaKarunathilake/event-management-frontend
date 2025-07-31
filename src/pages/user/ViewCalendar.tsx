@@ -24,7 +24,7 @@ export default function ViewCalendar() {
   }
   const fetchEvents = async () => {
     try {
-      const response = await handleEventGetting();
+      const response = await handleEventGetting(undefined, undefined, "upc-only");
       setEvents(response.items);
     } catch (err: any) {
       showErrorToast(err.message);
@@ -32,7 +32,7 @@ export default function ViewCalendar() {
   };
 
   const loadEvents = async () => {
-    const registeredEvents = (await handleEventGetting()).items;
+    const registeredEvents = (await handleEventGetting(undefined, undefined, "upc-only")).items;
 
     // Filter out full events
     const availableEvents = registeredEvents.filter(

@@ -4,13 +4,13 @@ import { EventCard } from "@/components/ui/event-card";
 import type { EventDetails } from "@/models/EventModel";
 import { handleEventGetting } from "@/services/EventService";
 import { showErrorToast } from "@/components/files/toast";
-
 import { Loader } from "@/components/ui/loader";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { SearchBox } from "@/components/ui/search-box";
 import { handleGettingRegistrationsByUserId } from "@/services/RegistrationService";
 import type { RegisteredEvent } from "@/models/RegisterModel";
+import { Pagination } from "@/components/ui/pagination";
 
 type SortOption =
   | "all"
@@ -33,14 +33,14 @@ export default function ViewEvents() {
 
   const [totalCount, setTotalCount] = useState(0);
   const [page, setPage] = useState(1);
-  const pageSize = 2;
+  const pageSize = 6
 
   const handleOpenModal = () => setModalOpen(true);
 
   const fetchEvents = async () => {
     try {
       setLoading(true);
-      const response = await handleEventGetting(page, pageSize);
+      const response = await handleEventGetting(page, pageSize, sortBy, searchTerm);
       setEvents(response.items);
       setTotalCount(response.totalCount);
     } catch (err: any) {
@@ -75,43 +75,45 @@ export default function ViewEvents() {
   };
 
   // Filter and sort events
-  const filteredAndSortedEvents = useMemo(() => {
-    let filtered = events.filter(
-      (event) =>
-        event.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        event.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        event.location?.toLowerCase().includes(searchTerm.toLowerCase()),
-    );
+  // const filteredAndSortedEvents = useMemo(() => {
+  //   const baseList =
+  //     searchTerm.trim() !== "" || sortBy !== "all" ? allEvents : events;
 
-    if (sortBy === "upc-only") {
-      filtered = filtered.filter((e) => new Date(e.startDateTime) > new Date());
-    } else if (sortBy === "exp-only") {
-      filtered = filtered.filter((e) => new Date(e.startDateTime) < new Date());
-    }
+  //   let filtered = baseList.filter(
+  //     (event) =>
+  //       event.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //       event.location?.toLowerCase().includes(searchTerm.toLowerCase()),
+  //   );
 
-    filtered.sort((a, b) => {
-      switch (sortBy) {
-        case "date-asc":
-          return (
-            new Date(a.startDateTime || 0).getTime() -
-            new Date(b.startDateTime || 0).getTime()
-          );
-        case "date-desc":
-          return (
-            new Date(b.startDateTime || 0).getTime() -
-            new Date(a.startDateTime || 0).getTime()
-          );
-        case "name-asc":
-          return (a.title || "").localeCompare(b.title || "");
-        case "name-desc":
-          return (b.title || "").localeCompare(a.title || "");
-        default:
-          return 0;
-      }
-    });
+  //   if (sortBy === "upc-only") {
+  //     filtered = filtered.filter((e) => new Date(e.startDateTime + "Z") > new Date());
+  //   } else if (sortBy === "exp-only") {
+  //     filtered = filtered.filter((e) => new Date(e.startDateTime + "Z") < new Date());
+  //   }
 
-    return filtered;
-  }, [events, searchTerm, sortBy]);
+  //   filtered.sort((a, b) => {
+  //     switch (sortBy) {
+  //       case "date-asc":
+  //         return (
+  //           new Date(a.startDateTime || 0).getTime() -
+  //           new Date(b.startDateTime || 0).getTime()
+  //         );
+  //       case "date-desc":
+  //         return (
+  //           new Date(b.startDateTime || 0).getTime() -
+  //           new Date(a.startDateTime || 0).getTime()
+  //         );
+  //       case "name-asc":
+  //         return (a.title || "").localeCompare(b.title || "");
+  //       case "name-desc":
+  //         return (b.title || "").localeCompare(a.title || "");
+  //       default:
+  //         return 0;
+  //     }
+  //   });
+
+  //   return filtered;
+  // }, [events, allEvents, searchTerm, sortBy]);
 
   useEffect(() => {
     fetchEvents();
@@ -120,7 +122,7 @@ export default function ViewEvents() {
 
   useEffect(() => {
     fetchEvents();
-  }, [page]);
+  }, [page, searchTerm, sortBy]);
 
   useEffect(() => {
     const shouldFetchAll = searchTerm.trim() !== "" || sortBy !== "all";
@@ -155,19 +157,19 @@ export default function ViewEvents() {
           </h3>
           {!loading && (
             <div className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
-              {searchTerm
-                ? `${filteredAndSortedEvents.length} of ${events.length} events`
-                : `${events.length} events`}
+              {searchTerm || sortBy !== "all"
+  ? `${events.length} of ${allEvents.length} events`
+  : `${events.length} events`}
             </div>
           )}
         </div>
 
-        {/* Events Display */}
+
         {loading ? (
           <div className="flex justify-center py-12">
             <Loader />
           </div>
-        ) : filteredAndSortedEvents.length === 0 ? (
+        ) : events.length === 0 ? (
           <Card className="max-w-md mx-auto p-8 text-center border border-border bg-muted rounded-lg">
             {!searchTerm ? (
               <>
@@ -195,7 +197,7 @@ export default function ViewEvents() {
         ) : (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredAndSortedEvents.map((event, idx) => (
+              {events.map((event, idx) => (
                 <EventCard
                   key={event.id || idx}
                   event={event}
@@ -209,7 +211,7 @@ export default function ViewEvents() {
             </div>
 
             {/* Show more info if filtered */}
-            {searchTerm && filteredAndSortedEvents.length < totalCount && (
+            {searchTerm && events.length < totalCount && (
               <Card className="mt-8 p-4 bg-yellow-50 rounded-lg border border-yellow-200 max-w-xl mx-auto text-center">
                 <p className="text-yellow-800">
                   <span className="font-medium">
@@ -230,37 +232,12 @@ export default function ViewEvents() {
           </>
         )}
 
-        {totalPages > 1 && (
-          <div className="flex justify-center mt-8 gap-2">
-            <Button
-              disabled={page === 1}
-              onClick={() => setPage(page - 1)}
-              variant="outline"
-              className="cursor-pointer"
-            >
-              Previous
-            </Button>
-
-            {[...Array(totalPages)].map((_, i) => (
-              <Button
-                key={i}
-                variant={page === i + 1 ? "default" : "outline"}
-                onClick={() => setPage(i + 1)}
-                className="cursor-pointer"
-              >
-                {i + 1}
-              </Button>
-            ))}
-
-            <Button
-              disabled={page === totalPages}
-              onClick={() => setPage(page + 1)}
-              variant="outline"
-              className="cursor-pointer"
-            >
-              Next
-            </Button>
-          </div>
+        {totalPages > 1  && sortBy === "all" && searchTerm.trim() === "" && (
+          <Pagination
+            currentPage={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+          />
         )}
       </div>
 

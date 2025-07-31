@@ -12,6 +12,7 @@ import { Loader } from "@/components/ui/loader";
 export const GetEvents = () => {
   const [events, setEvents] = useState<EventDetails[]>([]);
   const [loading, setLoading] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false)
   const navigate = useNavigate();
 
   const navigateToUpdate = (e: any, id: string) => {
@@ -26,13 +27,15 @@ export const GetEvents = () => {
 
   const deleteEvent = async (e: any, id: string) => {
     e.stopPropagation();
-
+    setDeleteLoading(true)
     try {
       const response = await handleDeletingEvents(id);
       showSuccessToast(response);
       fetchAllPostedEvents();
     } catch (error: any) {
       showErrorToast(error.message);
+    } finally {
+      setDeleteLoading(false)
     }
   };
 
@@ -76,6 +79,7 @@ export const GetEvents = () => {
                 <EventBar
                   key={event.id}
                   event={event}
+                  loading={deleteLoading}
                   onDelete={deleteEvent}
                   onEdit={navigateToUpdate}
                   onViewRegistrations={navigateToViewRegistrations}

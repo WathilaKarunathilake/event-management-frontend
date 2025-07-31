@@ -47,9 +47,11 @@ export const handleEventUpdating = async (
 export const handleEventGetting = async (
   page?: number,
   pageSize?: number,
+  sortBy?: string, 
+  searchTerm?: string
 ): Promise<EventItems> => {
   try {
-    const response = await getEvents(page, pageSize);
+    const response = await getEvents(page, pageSize, sortBy, searchTerm);
     if (!response.data.success) {
       throw new Error(response.data.data);
     }

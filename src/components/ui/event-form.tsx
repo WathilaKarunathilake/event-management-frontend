@@ -12,6 +12,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
+import DefaultImage from "../../assets/image.png"
 
 export const defaultForm = {
   title: "",
@@ -176,39 +177,50 @@ export function EventForm({
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="imageUrl">Event Image</Label>
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
-                <label
-                  htmlFor="imageUrl"
-                  className="bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded cursor-pointer text-sm"
-                >
-                  Choose File
-                </label>
+  <Label htmlFor="imageUrl">Event Image</Label>
+  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
+    <label
+      htmlFor="imageUrl"
+      className="bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded cursor-pointer text-sm"
+    >
+      Choose File
+    </label>
 
-                {fileName ? (
-                  <span className="text-sm text-gray-700">{fileName}</span>
-                ) : form.imageUrl?.startsWith("http") ? (
-                  <a
-                    href={form.imageUrl}
-                    className="text-blue-600 underline text-sm"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    View Image
-                  </a>
-                ) : (
-                  <span className="text-gray-500 text-sm">No file chosen</span>
-                )}
-              </div>
+    {fileName && (
+      <span className="text-sm text-gray-700">{fileName}</span>
+    )}
+  </div>
 
-              <input
-                id="imageUrl"
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="hidden"
-              />
-            </div>
+  {form.imageUrl ? (
+    <img
+      src={
+        form.imageUrl.startsWith("http")
+          ? form.imageUrl
+          : `data:image/jpeg;base64,${form.imageUrl}`
+      }
+      alt="Event"
+      className="mt-2 h-32 w-32 object-cover border rounded"
+    />
+  ) : (
+    <>
+    <img
+      src={
+        DefaultImage
+      }
+      alt="Event"
+      className="mt-2 h-32 w-32 object-cover border rounded"
+    /><span className="text-gray-500 text-sm">No file chosen<br/>Proceeding with Default Image</span></>
+    
+  )}
+
+  <input
+    id="imageUrl"
+    type="file"
+    accept="image/*"
+    onChange={handleImageChange}
+    className="hidden"
+  />
+</div>
 
             <Button
               disabled={loading}

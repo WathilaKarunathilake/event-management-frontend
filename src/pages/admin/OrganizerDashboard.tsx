@@ -56,7 +56,7 @@ export function OrganizerDashboard() {
             />
             <StatCard
               icon={<CheckCircle className="text-emerald-600 w-6 h-6" />}
-              title="Active Events"
+              title="Non-filled Events"
               value={summary?.activeEvents ?? 0}
               color="emerald"
             />
@@ -77,7 +77,7 @@ export function OrganizerDashboard() {
             />
             <StatCard
               icon={<Users className="text-slate-600 w-6 h-6" />}
-              title="Total Attendees"
+              title="Total Registrations (All Events)"
               value={summary?.totalAttendees.toLocaleString() ?? 0}
               color="slate"
             />

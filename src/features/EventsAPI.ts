@@ -11,11 +11,16 @@ export const addEvent = async (data: AddEvent): Promise<any> => {
 export const getEvents = async (
   page?: number,
   pageSize?: number,
+  sortBy?: string, 
+  searchTerm?: string
 ): Promise<any> => {
   const params = new URLSearchParams();
 
-  if (page !== undefined) params.append("page", page.toString());
-  if (pageSize !== undefined) params.append("pageSize", pageSize.toString());
+  if (page) params.append("page", page.toString());
+  if (pageSize) params.append("pageSize", pageSize.toString());
+
+  if (sortBy) params.append("sortBy", sortBy);
+  if (searchTerm?.trim()) params.append("searchTerm", searchTerm.trim());
 
   const queryString = params.toString();
   const url = queryString
