@@ -21,11 +21,12 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 let globalLogout: ((msg?: string) => void) | null = null;
-const notificationSoundUrl = 'https://actions.google.com/sounds/v1/alarms/beep_short.ogg';
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  
+  const notificationSoundUrl = 'https://actions.google.com/sounds/v1/alarms/beep_short.ogg';
   const [play] = useSound(notificationSoundUrl);
 
   const getUserDetails = async () => {
