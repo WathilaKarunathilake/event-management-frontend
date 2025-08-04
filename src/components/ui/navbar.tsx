@@ -79,7 +79,7 @@ export const Navbar = () => {
   return (
     <nav className="fixed top-0 left-0 z-50 bg-white shadow-sm px-4 w-full">
       <div className="flex items-center justify-between h-16 max-w-screen-xl mx-auto">
-        <Link to="/home" className="text-xl text-purple-700 font-bold">
+        <Link to="/" className="text-xl text-purple-700 font-bold">
           Event<span className="text-gray-800 font-semibold">ify</span>
         </Link>
 
