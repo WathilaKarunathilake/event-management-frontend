@@ -14,6 +14,7 @@ import { Loader } from "@/components/ui/loader";
 export function ViewRegistrations() {
   const [registrations, setRegistrations] = useState<RegisteredEvent[]>([]);
   const [loading, setLoading] = useState(false);
+  const [cancelLoading, setCancelLoading] = useState(false)
 
   const fetchRegistrations = async () => {
     try {
@@ -33,12 +34,15 @@ export function ViewRegistrations() {
 
   const handleCancel = async (e: any, id: string) => {
     e.stopPropagation();
+    setCancelLoading(true)
     try {
       const response = await handleCancelRegistration(id);
       showSuccessToast(response);
       await fetchRegistrations();
     } catch (err: any) {
       showErrorToast(err.message);
+    } finally {
+      setCancelLoading(false)
     }
   };
 
@@ -66,6 +70,7 @@ export function ViewRegistrations() {
                     event={registration}
                     onCancel={handleCancel}
                     onDownloadICS={downloadSingleEventAsICS}
+                    loading={cancelLoading}
                   />
                 </Card>
               ))
