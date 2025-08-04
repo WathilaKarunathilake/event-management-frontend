@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { RegisterModel } from "@/components/ui/register-modal";
 import { EventCard } from "@/components/ui/event-card";
 import type { EventDetails } from "@/models/EventModel";
