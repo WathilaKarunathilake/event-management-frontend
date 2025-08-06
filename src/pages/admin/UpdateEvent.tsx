@@ -7,17 +7,18 @@ import {
 import { showErrorToast, showSuccessToast } from "@/components/files/toast";
 import { defaultForm, EventForm } from "@/components/ui/event-form";
 import { toLocalDateTimeString } from "@/lib/helpers";
+import { useBoolean } from "@/context/hooks/useBoolean";
 
 export const UpdateEvent = () => {
   const { id } = useParams();
   const [form, setForm] = useState(defaultForm);
-  const [loading, setLoading] = useState(true);
+  const loading = useBoolean()
   const navigator = useNavigate();
 
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        setLoading(true);
+        loading.setTrue()
         const data = await handleEventGettingById(id!);
 
         setForm({
@@ -34,7 +35,7 @@ export const UpdateEvent = () => {
       } catch (error) {
         console.log(error);
       } finally {
-        setLoading(false);
+        loading.setFalse()
       }
     };
     fetchEvent();
@@ -43,7 +44,7 @@ export const UpdateEvent = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log(form);
-    setLoading(true);
+    loading.setTrue();
     try {
       const payload = {
         ...form,
@@ -56,7 +57,7 @@ export const UpdateEvent = () => {
     } catch (err: any) {
       showErrorToast(err.message);
     } finally {
-      setLoading(false);
+      loading.setFalse()
     }
   };
 
@@ -64,7 +65,7 @@ export const UpdateEvent = () => {
     <EventForm
       form={form}
       setForm={setForm}
-      loading={loading}
+      loading={loading.value}
       onSubmit={handleSubmit}
       submitText="Update Event"
       title="Update Event"

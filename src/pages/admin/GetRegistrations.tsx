@@ -7,16 +7,17 @@ import { handleEventGettingById } from "@/services/EventService";
 import { showErrorToast } from "@/components/files/toast";
 import { UserDetailsCard } from "@/components/ui/user-details-card";
 import { Loader } from "@/components/ui/loader";
+import { useBoolean } from "@/context/hooks/useBoolean";
 
 export function GetRegistrations() {
   const [users, setUsers] = useState<GetRegisteredUsers[]>([]);
   const [eventName, setEventName] = useState("");
-  const [loading, setLoading] = useState(false);
   const { eventId } = useParams();
+  const loading = useBoolean()
 
   const fetchRegistrations = async () => {
     try {
-      setLoading(true);
+      loading.setTrue()
       const response = await handleGettingRegistrationsByEventId(eventId!);
       const event = await handleEventGettingById(eventId!);
       setEventName(event.title!);
@@ -24,7 +25,7 @@ export function GetRegistrations() {
     } catch (error: any) {
       showErrorToast(error.message);
     } finally {
-      setLoading(false);
+      loading.setFalse()
     }
   };
 
@@ -43,7 +44,7 @@ export function GetRegistrations() {
       </div>
 
       <ScrollArea className="space-y-6 pr-2">
-        {loading ? (
+        {loading.value ? (
           <Loader />
         ) : users.length === 0 ? (
           <p className="text-gray-500">No registrations found.</p>
