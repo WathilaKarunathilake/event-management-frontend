@@ -23,6 +23,7 @@ jobs:
         run: |
           echo "VITE_BACKEND_URL=${{ secrets.VITE_BACKEND_URL }}" >> .env
           echo "VITE_NOTI_HUB=${{ secrets.VITE_NOTI_HUB }}" >> .env
+          echo "VITE_NOTIFICATION_SOUND=${{ secrets.VITE_NOTIFICATION_SOUND }}" >> .env
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -63,5 +64,6 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_DELIGHTFUL_MUD_034114B00 }}
           action: "close"
+
 
 
