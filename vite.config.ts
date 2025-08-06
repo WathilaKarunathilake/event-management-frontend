@@ -11,4 +11,12 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    minify: "terser", // Removing the console messages
+    terserOptions: {
+      compress: {
+        drop_console: true,
+      },
+    } as any,  
+  },
 });
