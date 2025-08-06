@@ -8,7 +8,6 @@ import {
 } from "@/services/NotificationService";
 import { showInfoToast, showSuccessToast } from "@/components/files/toast";
 import { getItem, setItem } from "@/storage/Storage";
-import useSound from 'use-sound';
 
 interface AuthContextType {
   user: User | null;
@@ -25,9 +24,6 @@ let globalLogout: ((msg?: string) => void) | null = null;
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  
-  const notificationSoundUrl = 'https://actions.google.com/sounds/v1/alarms/beep_short.ogg';
-  const [play] = useSound(notificationSoundUrl);
 
   const getUserDetails = async () => {
     try {
@@ -43,19 +39,38 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   useEffect(() => {
+    if (Notification.permission === "default") {
+    Notification.requestPermission().then(permission => {
+      console.log("Notification permission:", permission);
+    });
+  }
+
     getUserDetails();
   }, []);
 
   useEffect(() => {
-    startNotificationHub((message: NotificationMessage) => {
-      showInfoToast(message.subject, message.content);
-       play();
-    });
+  if (!user) {
+    stopNotificationHub();
+    return;
+  }
 
-    return () => {
-      stopNotificationHub();
-    };
-  }, [user, play]);
+  startNotificationHub((message: NotificationMessage) => {
+    showInfoToast(message.subject, message.content);
+
+    if (Notification.permission === "granted") {
+      const soundUrl = import.meta.env.VITE_NOTIFICATION_SOUND;
+  const audio = new Audio(soundUrl);
+    audio.play().catch(() => {
+      console.log("Audio not playing !")
+    });
+    }
+  });
+  
+
+  return () => {
+    stopNotificationHub();
+  };
+}, [user]);
 
   const login = async () => {
     try {

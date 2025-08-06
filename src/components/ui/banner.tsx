@@ -5,7 +5,7 @@ import BannerImage from "../../assets/banner.png";
 
 export function Banner() {
   return (
-    <section className="px-10 py-7 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center px-6 py-12 bg-white">
+    <section className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center px-6 py-12 bg-white">
       <div>
         <h1 className="text-4xl font-bold tracking-tight mb-4 flex items-center gap-2 text-gray-800">
           <Sparkles className="text-purple-600" />
