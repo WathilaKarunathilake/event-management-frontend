@@ -8,6 +8,7 @@ import {
 } from "@/services/NotificationService";
 import { showInfoToast, showSuccessToast } from "@/components/files/toast";
 import { getItem, setItem } from "@/storage/Storage";
+import { useBoolean } from "../hooks/useBoolean";
 
 interface AuthContextType {
   user: User | null;
@@ -23,18 +24,18 @@ let globalLogout: ((msg?: string) => void) | null = null;
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const loading = useBoolean()
 
   const getUserDetails = async () => {
     try {
-      setLoading(true);
+      loading.setTrue()
       const response = await handleGettingJwtInfo();
       setUser(response);
     } catch (error) {
       console.error("Failed to get user details", error);
       setUser(null);
     } finally {
-      setLoading(false);
+      loading.setFalse()
     }
   };
 
@@ -97,7 +98,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [logout]);
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, hasRole, loading }}>
+    <AuthContext.Provider value={{ user, login, logout, hasRole, loading: loading.value }}>
       {children}
     </AuthContext.Provider>
   );

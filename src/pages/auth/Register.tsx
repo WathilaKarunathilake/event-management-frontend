@@ -17,6 +17,7 @@ import { useAuth } from "@/context/auth/AuthProvider";
 import { navigateByRole } from "@/lib/role-navigator";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { showErrorToast, showSuccessToast } from "@/components/files/toast";
+import { useBoolean } from "@/context/hooks/useBoolean";
 
 export const Register = () => {
   const navigate = useNavigate();
@@ -32,10 +33,9 @@ export const Register = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const loading = useBoolean()
 
   useEffect(() => {
-    console.log(user);
     if (user) {
       const role = user.role.toString();
       navigateByRole(navigate, role);
@@ -56,8 +56,7 @@ export const Register = () => {
       showErrorToast("Passwords do not match");
       return;
     }
-
-    setLoading(true);
+    loading.setTrue()
 
     try {
       await handleRegister({
@@ -74,7 +73,7 @@ export const Register = () => {
     } catch (err: any) {
       showErrorToast(err.message);
     } finally {
-      setLoading(false);
+      loading.setFalse()
     }
   };
 
@@ -133,7 +132,7 @@ export const Register = () => {
                       Public User
                     </SelectItem>
                     <SelectItem value="0" className="cursor-pointer">
-                      Admin
+                      Organizer
                     </SelectItem>
                   </SelectContent>
                 </Select>
@@ -203,12 +202,12 @@ export const Register = () => {
             <Button
               type="submit"
               className="w-full mt-2 bg-purple-700 hover:bg-purple-800 text-white cursor-pointer"
-              disabled={loading}
+              disabled={loading.value}
             >
-              {loading && (
+              {loading.value && (
                 <Loader2 className="h-6 w-6 animate-spin stroke-[2.5]" />
               )}
-              {loading ? "Registering..." : "Register"}
+              {loading.value ? "Registering..." : "Register"}
             </Button>
 
             <div className="text-center text-sm">

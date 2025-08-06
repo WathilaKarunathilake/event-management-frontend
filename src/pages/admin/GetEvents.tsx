@@ -8,12 +8,13 @@ import { showErrorToast, showSuccessToast } from "@/components/files/toast";
 import { useNavigate } from "react-router-dom";
 import { EventBar } from "@/components/ui/event-bar";
 import { Loader } from "@/components/ui/loader";
+import { useBoolean } from "@/context/hooks/useBoolean";
 
 export const GetEvents = () => {
   const [events, setEvents] = useState<EventDetails[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [deleteLoading, setDeleteLoading] = useState(false)
   const navigate = useNavigate();
+  const loading = useBoolean()
+  const deleteLoading = useBoolean()
 
   const navigateToUpdate = (e: any, id: string) => {
     e.stopPropagation();
@@ -27,7 +28,7 @@ export const GetEvents = () => {
 
   const deleteEvent = async (e: any, id: string) => {
     e.stopPropagation();
-    setDeleteLoading(true)
+    deleteLoading.setTrue()
     try {
       const response = await handleDeletingEvents(id);
       showSuccessToast(response);
@@ -35,19 +36,19 @@ export const GetEvents = () => {
     } catch (error: any) {
       showErrorToast(error.message);
     } finally {
-      setDeleteLoading(false)
+      deleteLoading.setFalse()
     }
   };
 
   const fetchAllPostedEvents = async () => {
     try {
-      setLoading(true);
+      loading.setTrue()
       const response = await handleGettingPostedEvents();
       setEvents(response);
     } catch (er: any) {
       showErrorToast(er.message);
     } finally {
-      setLoading(false);
+      loading.setFalse()
     }
   };
 
@@ -57,7 +58,7 @@ export const GetEvents = () => {
 
   return (
     <div className="container mt-5 p-6 rounded-lg bg-white shadow cart">
-      {loading ? (
+      {loading.value ? (
         <Loader />
       ) : (
         <div className="flex flex-col">
@@ -79,7 +80,7 @@ export const GetEvents = () => {
                 <EventBar
                   key={event.id}
                   event={event}
-                  loading={deleteLoading}
+                  loading={deleteLoading.value}
                   onDelete={deleteEvent}
                   onEdit={navigateToUpdate}
                   onViewRegistrations={navigateToViewRegistrations}

@@ -10,6 +10,7 @@ import { useAuth } from "@/context/auth/AuthProvider";
 import { navigateByRole } from "@/lib/role-navigator";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { showErrorToast, showSuccessToast } from "@/components/files/toast";
+import { useBoolean } from "@/context/hooks/useBoolean";
 
 export const Login = () => {
   const navigate = useNavigate();
@@ -19,11 +20,10 @@ export const Login = () => {
     password: "",
     rememberMe: true,
   });
-
-  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   const { login, user } = useAuth();
+  const loading = useBoolean()
 
   useEffect(() => {
     console.log(user);
@@ -40,7 +40,7 @@ export const Login = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    loading.setTrue()
 
     try {
       await handleLogin(form);
@@ -51,7 +51,7 @@ export const Login = () => {
     } catch (err: any) {
       showErrorToast(err.message);
     } finally {
-      setLoading(false);
+      loading.setFalse()
     }
   };
 
@@ -119,12 +119,12 @@ export const Login = () => {
               <Button
                 type="submit"
                 className="w-full bg-purple-700 hover:bg-purple-800 text-white cursor-pointer"
-                disabled={loading}
+                disabled={loading.value}
               >
-                {loading && (
+                {loading.value && (
                   <Loader2 className="h-6 w-6 animate-spin stroke-[2.5]" />
                 )}
-                {loading ? "Logging in..." : "Log in"}
+                {loading.value ? "Logging in..." : "Log in"}
               </Button>
 
               <div className="text-center text-sm">

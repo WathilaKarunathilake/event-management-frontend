@@ -1,6 +1,7 @@
 import { showErrorToast } from "@/components/files/toast";
 import { Loader } from "@/components/ui/loader";
 import StatCard from "@/components/ui/stats-card";
+import { useBoolean } from "@/context/hooks/useBoolean";
 import type { EventSummary } from "@/models/EventModel";
 import { handleGettingEventsSummary } from "@/services/EventService";
 import {
@@ -16,17 +17,17 @@ import { Link } from "react-router-dom";
 
 export function OrganizerDashboard() {
   const [summary, setSummary] = useState<EventSummary>();
-  const [loading, setLoading] = useState(false);
+  const loading = useBoolean()
 
   const fetchSummary = async () => {
     try {
-      setLoading(true);
+      loading.setTrue();
       const response = await handleGettingEventsSummary();
       setSummary(response);
     } catch (e: any) {
       showErrorToast(e.message);
     } finally {
-      setLoading(false);
+      loading.setFalse()
     }
   };
 
@@ -43,7 +44,7 @@ export function OrganizerDashboard() {
         Here’s a quick overview of your event performance and upcoming
         activities.
       </p>
-      {loading ? (
+      {loading.value ? (
         <Loader />
       ) : (
         <>

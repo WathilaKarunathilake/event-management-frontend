@@ -3,15 +3,16 @@ import { handleEventAdding } from "@/services/EventService";
 import { showErrorToast, showSuccessToast } from "@/components/files/toast";
 import { useNavigate } from "react-router-dom";
 import { defaultForm, EventForm } from "@/components/ui/event-form";
+import { useBoolean } from "@/context/hooks/useBoolean";
 
 export const AddEvent = () => {
   const [form, setForm] = useState(defaultForm);
-  const [loading, setLoading] = useState(false);
+  const loading = useBoolean()
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    loading.setTrue()
     try {
       const payload = {
         ...form,
@@ -24,7 +25,7 @@ export const AddEvent = () => {
     } catch (err: any) {
       showErrorToast(err.message);
     } finally {
-      setLoading(false);
+      loading.setFalse()
     }
   };
 
@@ -32,7 +33,7 @@ export const AddEvent = () => {
     <EventForm
       form={form}
       setForm={setForm}
-      loading={loading}
+      loading={loading.value}
       onSubmit={handleSubmit}
       submitText="Add Event"
       title="Create New Event"

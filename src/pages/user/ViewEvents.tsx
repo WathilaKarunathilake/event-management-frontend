@@ -11,6 +11,7 @@ import { SearchBox } from "@/components/ui/search-box";
 import { handleGettingRegistrationsByUserId } from "@/services/RegistrationService";
 import type { RegisteredEvent } from "@/models/RegisterModel";
 import { Pagination } from "@/components/ui/pagination";
+import { useBoolean } from "@/context/hooks/useBoolean";
 
 type SortOption =
   | "all"
@@ -25,7 +26,6 @@ export default function ViewEvents() {
   const [events, setEvents] = useState<EventDetails[]>([]);
   const [allEvents, setAllEvents] = useState<EventDetails[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [eventId, setEventId] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState<SortOption>("all");
@@ -33,44 +33,46 @@ export default function ViewEvents() {
 
   const [totalCount, setTotalCount] = useState(0);
   const [page, setPage] = useState(1);
+
+  const loading = useBoolean()
   const pageSize = 6
 
   const handleOpenModal = () => setModalOpen(true);
 
   const fetchEvents = async () => {
     try {
-      setLoading(true);
+      loading.setTrue()
       const response = await handleEventGetting(page, pageSize, sortBy, searchTerm);
       setEvents(response.items);
       setTotalCount(response.totalCount);
     } catch (err: any) {
       showErrorToast(err.message);
     } finally {
-      setLoading(false);
+      loading.setFalse()
     }
   };
 
   const fetchAllEvents = async () => {
     try {
-      setLoading(true);
+      loading.setTrue()
       const response = await handleEventGetting();
       setAllEvents(response.items);
     } catch (err: any) {
       showErrorToast(err.message);
     } finally {
-      setLoading(false);
+      loading.setFalse()
     }
   };
 
   const fetchRegistrations = async () => {
     try {
-      setLoading(true);
+      loading.setTrue()
       const response = await handleGettingRegistrationsByUserId();
       setRegistrations(response);
     } catch (err: any) {
       showErrorToast(err.message);
     } finally {
-      setLoading(false);
+      loading.setFalse()
     }
   };
 
@@ -155,7 +157,7 @@ export default function ViewEvents() {
                   ? "Expired Events"
                   : "All Events"}
           </h3>
-          {!loading && (
+          {!loading.value && (
             <div className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
               {searchTerm || sortBy !== "all"
   ? `${events.length} of ${allEvents.length} events`
@@ -165,7 +167,7 @@ export default function ViewEvents() {
         </div>
 
 
-        {loading ? (
+        {loading.value ? (
           <div className="flex justify-center py-12">
             <Loader />
           </div>

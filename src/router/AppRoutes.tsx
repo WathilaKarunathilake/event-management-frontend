@@ -13,6 +13,7 @@ import { ProtectedRoute } from "@/context/auth/ProtectedRoute";
 import ViewCalendar from "@/pages/user/ViewCalendar";
 import HomePage from "@/pages/user/Home";
 import { OrganizerDashboard } from "@/pages/admin/OrganizerDashboard";
+import EventInformationPage from "@/pages/common/EventInformationPage";
 
 export const AppRoutes = () => {
   return (
@@ -104,6 +105,9 @@ export const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
+
+      {/* QR Pages  */}
+      <Route path="/event-info" element={<EventInformationPage/>} />
 
       {/* Error Pages */}
       <Route path="/unauthorized" element={<UnauthorizedPage />} />

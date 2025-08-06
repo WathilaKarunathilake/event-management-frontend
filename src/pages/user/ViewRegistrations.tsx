@@ -10,21 +10,23 @@ import type { RegisteredEvent } from "@/models/RegisterModel";
 import { EventBar } from "@/components/ui/event-bar";
 import { downloadSingleEventAsICS } from "@/lib/helpers";
 import { Loader } from "@/components/ui/loader";
+import { useBoolean } from "@/context/hooks/useBoolean";
 
 export function ViewRegistrations() {
   const [registrations, setRegistrations] = useState<RegisteredEvent[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [cancelLoading, setCancelLoading] = useState(false)
+  
+  const loading = useBoolean()
+  const cancelLoading = useBoolean()
 
   const fetchRegistrations = async () => {
     try {
-      setLoading(true);
+      loading.setTrue()
       const response = await handleGettingRegistrationsByUserId();
       setRegistrations(response);
     } catch (err: any) {
       showErrorToast(err.message);
     } finally {
-      setLoading(false);
+      loading.setFalse()
     }
   };
 
@@ -34,7 +36,7 @@ export function ViewRegistrations() {
 
   const handleCancel = async (e: any, id: string) => {
     e.stopPropagation();
-    setCancelLoading(true)
+    cancelLoading.setTrue()
     try {
       const response = await handleCancelRegistration(id);
       showSuccessToast(response);
@@ -42,14 +44,14 @@ export function ViewRegistrations() {
     } catch (err: any) {
       showErrorToast(err.message);
     } finally {
-      setCancelLoading(false)
+      cancelLoading.setFalse()
     }
   };
 
   return (
     <div className="container mx-auto w-full px-4 py-10">
       <h2 className="text-2xl font-semibold ">Your Registration History</h2>
-      {loading ? (
+      {loading.value ? (
         <Loader />
       ) : (
         <>
@@ -70,7 +72,7 @@ export function ViewRegistrations() {
                     event={registration}
                     onCancel={handleCancel}
                     onDownloadICS={downloadSingleEventAsICS}
-                    loading={cancelLoading}
+                    loading={cancelLoading.value}
                   />
                 </Card>
               ))
