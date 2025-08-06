@@ -132,7 +132,7 @@ export const Register = () => {
                       Public User
                     </SelectItem>
                     <SelectItem value="0" className="cursor-pointer">
-                      Admin
+                      Organizer
                     </SelectItem>
                   </SelectContent>
                 </Select>
