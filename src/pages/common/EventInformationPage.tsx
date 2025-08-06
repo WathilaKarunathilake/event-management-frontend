@@ -5,7 +5,8 @@ export default function EventInformationPage() {
   const [params] = useSearchParams();
   const title = params.get("title") || "Untitled Event";
   const refId = params.get("refId") || "N/A";
-  const date = params.get("date") || "N/A";
+  const startDate = params.get("staring") || "N/A";
+  const endDate = params.get("ending") || "N/A";
   const start = params.get("start") || "N/A";
   const end = params.get("end") || "N/A";
   const venue = params.get("venue") || "N/A";
@@ -38,8 +39,18 @@ export default function EventInformationPage() {
               <Calendar className="w-4 h-4 text-white" />
             </div>
             <div>
-              <p className="text-xs text-gray-500 uppercase tracking-wide">Date</p>
-              <p className="text-gray-800 font-medium">{date}</p>
+              <p className="text-xs text-gray-500 uppercase tracking-wide">Start Date</p>
+              <p className="text-gray-800 font-medium">{startDate}</p>
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-purple-700 bg-opacity-10 rounded-full flex items-center justify-center flex-shrink-0">
+              <Calendar className="w-4 h-4 text-white" />
+            </div>
+            <div>
+              <p className="text-xs text-gray-500 uppercase tracking-wide">End Date</p>
+              <p className="text-gray-800 font-medium">{endDate}</p>
             </div>
           </div>
 
