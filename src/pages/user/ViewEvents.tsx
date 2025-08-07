@@ -82,6 +82,10 @@ export default function ViewEvents() {
   }, []);
 
   useEffect(() => {
+    setPage(1);
+  }, [searchTerm, sortBy]);
+
+  useEffect(() => {
     fetchEvents();
   }, [page, searchTerm, sortBy]);
 
@@ -175,9 +179,9 @@ export default function ViewEvents() {
             {searchTerm && events.length < totalCount && (
               <Card className="mt-8 p-4 bg-yellow-50 rounded-lg border border-yellow-200 max-w-xl mx-auto text-center">
                 <p className="text-yellow-800">
-                  <span className="font-medium">
-                    {events.length - totalCount}
-                  </span>{" "}
+                  <span className="font-medium">{searchTerm || sortBy !== "all"
+  ? `${events.length} of ${allEvents.length} events`
+  : `${events.length} events`}</span>
                   more events available.
                   <Button
                     variant="link"
@@ -193,7 +197,7 @@ export default function ViewEvents() {
           </>
         )}
 
-        {totalPages > 1  && sortBy === "all" && searchTerm.trim() === "" && (
+        {totalPages > 1 && (
           <Pagination
             currentPage={page}
             totalPages={totalPages}
