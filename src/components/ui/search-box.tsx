@@ -61,7 +61,7 @@ export function SearchBox({
               <Input
                 id="searchInput"
                 type="text"
-                placeholder="Search by title, location..."
+                placeholder="Search by title..."
                 value={searchTerm}
                 onChange={(e) => onSearchChange(e.target.value)}
                 className="pl-10"
