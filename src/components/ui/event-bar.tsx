@@ -80,7 +80,7 @@ export const EventBar = ({
 
             <div className="flex items-center gap-1">
               <CalendarDays className="h-4 w-4" />
-              {new Date(event.startDateTime + "Z").toLocaleDateString()} (
+              {new Date(event.startDateTime + "Z").toLocaleDateString()} – {new Date(event.endDateTime + "Z").toLocaleDateString()} (
               {getEventTypeLabel(event.eventType)})
             </div>
 
