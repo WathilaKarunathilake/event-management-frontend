@@ -76,47 +76,6 @@ export default function ViewEvents() {
     }
   };
 
-  // Filter and sort events
-  // const filteredAndSortedEvents = useMemo(() => {
-  //   const baseList =
-  //     searchTerm.trim() !== "" || sortBy !== "all" ? allEvents : events;
-
-  //   let filtered = baseList.filter(
-  //     (event) =>
-  //       event.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //       event.location?.toLowerCase().includes(searchTerm.toLowerCase()),
-  //   );
-
-  //   if (sortBy === "upc-only") {
-  //     filtered = filtered.filter((e) => new Date(e.startDateTime + "Z") > new Date());
-  //   } else if (sortBy === "exp-only") {
-  //     filtered = filtered.filter((e) => new Date(e.startDateTime + "Z") < new Date());
-  //   }
-
-  //   filtered.sort((a, b) => {
-  //     switch (sortBy) {
-  //       case "date-asc":
-  //         return (
-  //           new Date(a.startDateTime || 0).getTime() -
-  //           new Date(b.startDateTime || 0).getTime()
-  //         );
-  //       case "date-desc":
-  //         return (
-  //           new Date(b.startDateTime || 0).getTime() -
-  //           new Date(a.startDateTime || 0).getTime()
-  //         );
-  //       case "name-asc":
-  //         return (a.title || "").localeCompare(b.title || "");
-  //       case "name-desc":
-  //         return (b.title || "").localeCompare(a.title || "");
-  //       default:
-  //         return 0;
-  //     }
-  //   });
-
-  //   return filtered;
-  // }, [events, allEvents, searchTerm, sortBy]);
-
   useEffect(() => {
     fetchEvents();
     fetchRegistrations();
