@@ -169,7 +169,7 @@ export default function ViewEvents() {
                   onOpen={handleOpenModal}
                   setEventId={setEventId}
                   isUserRegistered={registrations.some(
-                    (reg) => reg.id === event.id,
+                    (reg) => reg.id === event.id && reg.registerType == 0,
                   )}
                 />
               ))}
