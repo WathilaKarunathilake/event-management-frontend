@@ -24,11 +24,10 @@ let globalLogout: ((msg?: string) => void) | null = null;
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const loading = useBoolean()
+  const loading = useBoolean(true)
 
   const getUserDetails = async () => {
     try {
-      loading.setTrue()
       const response = await handleGettingJwtInfo();
       setUser(response);
     } catch (error) {
